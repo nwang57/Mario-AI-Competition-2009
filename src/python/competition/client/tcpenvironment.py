@@ -4,6 +4,7 @@ __date__ = "$May 13, 2009 1:25:30 AM$"
 from client import Client
 from environment import Environment
 from utils.dataadaptor import show
+import pdb
 
 class TCPEnvironment(Environment):
 
@@ -33,7 +34,7 @@ class TCPEnvironment(Environment):
         
         data = self.client.recvData()
         data = self.to_unicode_or_bust(data)
-                
+        pdb.set_trace()
         if data == "ciao":
             self.client.disconnect()
             self.connected = False            

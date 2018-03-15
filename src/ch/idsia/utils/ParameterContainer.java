@@ -128,6 +128,7 @@ public class ParameterContainer
                 //        " used");
                 optionsHashMap.put(param, defaultOptionsHashMap.get(param));
             }
+            System.err.println("Parameter " + param + "!");
             return optionsHashMap.get(param);
         }
         else

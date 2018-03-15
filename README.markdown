@@ -1,11 +1,38 @@
-This is the code from the 2009 Mario AI competition: http://julian.togelius.com/mariocompetition2009/gettingstarted.php
+# Mario Environment
 
-The original code, taken directly from the competition page is in the 'original' branch.  I'll keep that up to date as they post updates to it.
+Mario enviroment is built by java but it supports a ServerAgent that can connect with any other agent written in different languages. It privides a Python client interface to extract the game information.
 
-The 'master' branch should contain fixes, improvements, examples, and library classes that may be useful to others.
+## Set up Server
 
-So what're you waiting for?  Fork this project and start hacking!
+A small bug in the original competition code [Mario Competition](https://github.com/rictic/Mario-AI-Competition-2009)
 
-Join us on IRC at irc://chat.freenode.net/#marioai
+In `ToolsConfigurator.java`, at line 107 we need to change the `evaluationOptions.getAgent().getName()` to `evaluationOptions.getAgentName()` to avoid null pointer reference.
 
-Group README: http://docs.google.com/Doc?docid=0AcOiEAaEF0pXZGQ2OXFxNnJfNmZtNWQ4amZn
+Then we use `ant` to build the project in the root directiory.
+
+Run following commands to launch the server
+```
+cd classes
+java ch.idsia.scenarios.MainRun -ag ServerAgent -server on
+```
+
+## Set up Client
+
+Example:
+
+`python src/python/competition/ipymario.py` to launch the client and run the agent.
+
+`ServerAgent.java` has the serialization protocol and can inspect the environment data.
+
+## Observation
+
+`dataadaptor.py` implements the deserialization protocol and extract the raw info of the environment.
+
+## Action
+
+The key map is as follows:
+ - Left: 0
+ - Right: 1
+ - Down: 2
+ - Jump: 3
+ - Speed: 4

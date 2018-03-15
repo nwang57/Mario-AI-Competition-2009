@@ -201,7 +201,7 @@ public class Evaluator implements Runnable
     }
 
     public Evaluator(EvaluationOptions evaluationOptions)
-    {                      
+    {          
         init(evaluationOptions);
     }
 

@@ -3,6 +3,7 @@ __author__ = "Sergey Karakovskiy, sergey at idsia fullstop ch"
 __date__ = "$May 1, 2009 2:46:34 AM$"
 
 from marioagent import MarioAgent
+import pdb
 
 class ForwardAgent(MarioAgent):
     """ In fact the Python twin of the
@@ -125,6 +126,7 @@ class ForwardAgent(MarioAgent):
 
     def integrateObservation(self, obs):
         """This method stores the observation inside the agent"""
+        pdb.set_trace()
         if (len(obs) != 6):
             self.isEpisodeOver = True
         else:

@@ -104,7 +104,7 @@ public class ToolsConfigurator extends JFrame
             marioComponentFrame.setResizable(false);
             marioComponentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         }
-        marioComponentFrame.setTitle(evaluationOptions.getAgent().getName());
+        marioComponentFrame.setTitle(evaluationOptions.getAgentName());
         marioComponentFrame.setAlwaysOnTop(evaluationOptions.isViewAlwaysOnTop());
         Point newWindowLocation = evaluationOptions.getViewLocation();
         if (newWindowLocation != null)

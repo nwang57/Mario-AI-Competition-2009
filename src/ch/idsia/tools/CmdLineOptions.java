@@ -85,7 +85,7 @@ public class CmdLineOptions extends EvaluationOptions
 //        argsHashMap.put("-m", matlabFileName);
 
         this.setUpOptions(args);
-//        System.out.println("args = " + args.length);
+        System.out.println("args = " + this.isServerMode());
         if (args.length == 1)
 //        {
             RegisterableAgent.registerAgent(args[0]);
