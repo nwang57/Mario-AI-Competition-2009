@@ -34,7 +34,7 @@ class TCPEnvironment(Environment):
         
         data = self.client.recvData()
         data = self.to_unicode_or_bust(data)
-        pdb.set_trace()
+        # pdb.set_trace()
         if data == "ciao":
             self.client.disconnect()
             self.connected = False            

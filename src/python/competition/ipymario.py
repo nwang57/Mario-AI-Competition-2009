@@ -6,7 +6,9 @@ import sys
 from experiments.episodicexperiment import EpisodicExperiment
 from tasks.mariotask import MarioTask
 from agents.forwardagent import ForwardAgent
+from agents.humanAgent import HumanAgent
 from agents.forwardrandomagent import ForwardRandomAgent
+import pygame
 
 
 #from pybrain.... episodic import EpisodicExperiment
@@ -15,40 +17,14 @@ from agents.forwardrandomagent import ForwardRandomAgent
 # send creatures.
 
 def main():
-    agent = ForwardAgent()
+    pygame.init()
+    pygame.display.set_mode([1,1])
+    agent = HumanAgent()
     task = MarioTask(agent.name, initMarioMode = 2)
     exp = EpisodicExperiment(task, agent)
     print 'Task Ready'
-    exp.doEpisodes(2)
+    exp.doEpisodes(1)
     print 'mm 2:', task.reward
-
-    task.env.initMarioMode = 1
-    exp.doEpisodes(1)
-    print 'mm 1:', task.reward
-    
-    task.env.initMarioMode = 0
-    exp.doEpisodes(1)
-    print 'mm 0:', task.reward
-
-    task.env.initMarioMode = 0
-    exp.doEpisodes(1)
-    print 'mm 0:', task.reward
-    
-    task.env.initMarioMode = 0
-    task.env.levelDifficulty = 5
-    exp.doEpisodes(1)
-    print 'mm 0, ld 5: ', task.reward
-    
-    task.env.initMarioMode = 1
-    task.env.levelDifficulty = 5
-    exp.doEpisodes(1)
-    print 'mm 1, ld 5: ', task.reward
-
-    task.env.initMarioMode = 2
-    task.env.levelDifficulty = 5
-    exp.doEpisodes(1)
-    print 'mm 2, ld 5: ', task.reward
-
     
     print "finished"
 

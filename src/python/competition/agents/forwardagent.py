@@ -4,6 +4,7 @@ __date__ = "$May 1, 2009 2:46:34 AM$"
 
 from marioagent import MarioAgent
 import pdb
+import pygame
 
 class ForwardAgent(MarioAgent):
     """ In fact the Python twin of the
@@ -106,27 +107,55 @@ class ForwardAgent(MarioAgent):
 #        if (self.isEpisodeOver):
 #            return numpy.ones(5, int)
 
-        danger = self._dangerOfGap()
-        if (self.levelScene[11, 12] != 0 or \
-            self.levelScene[11, 13] != 0 or danger):
-            if (self.mayMarioJump or \
-                (not self.isMarioOnGround and self.action[self.KEY_JUMP] == 1)):
-                self.action[self.KEY_JUMP] = 1
-            self.trueJumpCounter += 1
-        else:
-            self.action[self.KEY_JUMP] = 0;
-            self.trueJumpCounter = 0
+        # danger = self._dangerOfGap()
+        # if (self.levelScene[11, 12] != 0 or \
+        #     self.levelScene[11, 13] != 0 or danger):
+        #     if (self.mayMarioJump or \
+        #         (not self.isMarioOnGround and self.action[self.KEY_JUMP] == 1)):
+        #         self.action[self.KEY_JUMP] = 1
+        #     self.trueJumpCounter += 1
+        # else:
+        #     self.action[self.KEY_JUMP] = 0;
+        #     self.trueJumpCounter = 0
 
-        if (self.trueJumpCounter > 16):
-            self.trueJumpCounter = 0
-            self.action[self.KEY_JUMP] = 0;
+        # if (self.trueJumpCounter > 16):
+        #     self.trueJumpCounter = 0
+        #     self.action[self.KEY_JUMP] = 0;
 
-        self.action[self.KEY_SPEED] = danger
+        # self.action[self.KEY_SPEED] = danger
+        # return self.action
+
+    def getAction(self):
+        if (self.isEpisodeOver):
+            return numpy.ones(5, int)
+        print "M: mayJump: %s, onGround: %s, level[11,12]: %d, level[11,13]: %d, jc: %d" \
+            % (self.mayMarioJump, self.isMarioOnGround, self.levelScene[11,12], self.levelScene[11,13], self.trueJumpCounter)
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_d:
+                    self.action[1] = 1
+                elif event.key == pygame.K_a:
+                    self.action[0] = 1
+                if event.key == pygame.K_j:
+                    self.action[self.KEY_JUMP] = 1
+                if event.key == pygame.K_k:
+                    self.action[-1] = 1
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_d:
+                    self.action[1] = 0
+                elif event.key == pygame.K_a:
+                    self.action[0] = 0
+                if event.key == pygame.K_j:
+                    self.action[self.KEY_JUMP] = 0
+                if event.key == pygame.K_k:
+                    self.action[-1] = 0
+        print(self.action)
         return self.action
+
 
     def integrateObservation(self, obs):
         """This method stores the observation inside the agent"""
-        pdb.set_trace()
+        # pdb.set_trace()
         if (len(obs) != 6):
             self.isEpisodeOver = True
         else:

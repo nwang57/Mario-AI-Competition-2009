@@ -36,3 +36,11 @@ The key map is as follows:
  - Down: 2
  - Jump: 3
  - Speed: 4
+
+## HumanAgent
+
+Human can use wasd and j, k to control mario
+
+ ## Global options
+
+ The default FPS is 24 so the delay is 41. We can change the delay in `MarioComponent.adjustFPS()`. 

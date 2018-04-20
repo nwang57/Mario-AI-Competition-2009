@@ -15,6 +15,7 @@ class MarioAgent:
 
     def giveReward(self, reward):
         pass
+        
     def _getName(self):
         if self._name is None:
             self._name = self.__class__.__name__

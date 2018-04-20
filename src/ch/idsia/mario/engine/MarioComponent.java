@@ -75,7 +75,8 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 
     public void adjustFPS() {
         int fps = GlobalOptions.FPS;
-        delay = (fps > 0) ? (fps >= GlobalOptions.InfiniteFPS) ? 0 : (1000 / fps) : 100;
+        // delay = (fps > 0) ? (fps >= GlobalOptions.InfiniteFPS) ? 0 : (1000 / fps) : 100;
+        delay = 80;
 //        System.out.println("Delay: " + delay);
     }
 
