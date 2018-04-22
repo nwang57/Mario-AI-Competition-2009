@@ -9,6 +9,9 @@ from agents.forwardagent import ForwardAgent
 from agents.humanAgent import HumanAgent
 from agents.forwardrandomagent import ForwardRandomAgent
 import pygame
+import pickle
+import argparse
+
 
 
 #from pybrain.... episodic import EpisodicExperiment
@@ -17,21 +20,41 @@ import pygame
 # send creatures.
 
 def main():
+    args = parse_arguments()
+    agent_name = args.agent_name
+    filename = args.filename
+    num_epi = args.num_epi
+    print(agent_name, filename, num_epi)
     pygame.init()
     pygame.display.set_mode([1,1])
-    agent = HumanAgent()
+    if agent_name == 'human' :
+        agent = HumanAgent()
+    else:
+        agent = Forwardagent()
     task = MarioTask(agent.name, initMarioMode = 2)
     exp = EpisodicExperiment(task, agent)
     print 'Task Ready'
-    exp.doEpisodes(1)
+    all_rewards, all_obs, all_action = exp.doEpisodes(num_epi)
     print 'mm 2:', task.reward
     
+    if agent_name == 'human':
+        print (all_action)
+        with open('./expert_data/' + filename + '_demo.pckl', 'wb') as f:
+            pickle.dump((all_obs, all_action), f)
     print "finished"
-
+    pygame.quit()
 #    clo = CmdLineOptions(sys.argv)
 #    task = MarioTask(MarioEnvironment(clo.getHost(), clo.getPort(), clo.getAgent().name))
 #    exp = EpisodicExperiment(clo.getAgent(), task)
 #    exp.doEpisodes(3)
+
+def parse_arguments():
+    parser = argparse.ArgumentParser("Super Mario Agent Argument Parser")
+    parser.add_argument('--agent',dest='agent_name',type=str, default = 'human')
+    parser.add_argument('--filename',dest='filename',type=str)
+    parser.add_argument('--epi', dest='num_epi', type=int, default=1)
+    return parser.parse_args()
+
 
 if __name__ == "__main__":
     main()

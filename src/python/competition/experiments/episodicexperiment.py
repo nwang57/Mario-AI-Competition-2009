@@ -31,17 +31,28 @@ class EpisodicExperiment(Experiment):
     def doEpisodes(self, number = 1):
         """ returns the rewards of each step as a list """
         all_rewards = []
+        all_obs = []
+        all_action = []
         for dummy in range(number):
             rewards = []
+            obvs = []
+            actions = []
             self.stepid = 0
             # the agent is informed of the start of the episode
             self.agent.newEpisode()
             self.task.reset()
             while not self.task.isFinished():
-                r = self._oneInteraction()
+                r, obs, action = self._oneInteraction()
                 rewards.append(r)
+                obvs.append(obs)
+                actions.append(action)
+                print (action)
             all_rewards.append(rewards)
-        return all_rewards
+            all_obs.extend(obvs)
+            all_action.extend(actions)
+            print('hey action')
+            print (all_action)
+        return all_rewards, all_obs, all_action
         
 
 #class EpisodicExperiment(Experiment):

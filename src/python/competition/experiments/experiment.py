@@ -15,14 +15,18 @@ class Experiment(object):
             Returns the number of interactions done.
         """
         for dummy in range(number):
-            reward = self._oneInteraction()
+            reward, _, _ = self._oneInteraction()
         return reward
 
     def _oneInteraction(self):
         self.stepid += 1
-        self.agent.integrateObservation(self.task.getObservation())
+        obs = self.task.getObservation()
+        self.agent.integrateObservation(obs)
+        act = self.agent.getAction()
+        print('aaaaah')
+        print(act)
 #        print "experiment.py self.agent.getAction(): ", self.agent.getAction(), "\n"
-        self.task.performAction(self.agent.getAction())
+        self.task.performAction(act)
         reward = self.task.getReward()
         self.agent.giveReward(reward)
-        return reward
+        return reward, obs, act

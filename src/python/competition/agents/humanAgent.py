@@ -32,6 +32,8 @@ class HumanAgent(MarioAgent):
                     self.action[1] = 1
                 elif event.key == pygame.K_a:
                     self.action[0] = 1
+                elif event.key == pygame.K_s:
+                    self.action[2] = 1
                 if event.key == pygame.K_j:
                     self.action[self.KEY_JUMP] = 1
                 if event.key == pygame.K_k:
@@ -41,11 +43,13 @@ class HumanAgent(MarioAgent):
                     self.action[1] = 0
                 elif event.key == pygame.K_a:
                     self.action[0] = 0
+                elif event.key == pygame.K_s:
+                    self.action[2] = 0
                 if event.key == pygame.K_j:
                     self.action[self.KEY_JUMP] = 0
                 if event.key == pygame.K_k:
                     self.action[self.KEY_SPEED] = 0
-        print(self.action)
+        # print(self.action)
         return self.action
 
 
