@@ -255,7 +255,10 @@ public class MarioState {
   }
   
   public boolean canJump() {
-    return environment.isMarioAbleToJump();
+    /* ************************** */
+    return environment.mayMarioJump();
+    //return environment.isMarioAbleToJump();
+    /* ************************** */
   }
   
   /**
