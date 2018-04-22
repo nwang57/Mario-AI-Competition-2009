@@ -17,14 +17,11 @@ import pygame
 # send creatures.
 
 def main():
-    pygame.init()
-    pygame.display.set_mode([1,1])
-    agent = HumanAgent()
-    task = MarioTask(agent.name, initMarioMode = 2)
+    task = MarioTask(initMarioMode = 2)
+    agent = HumanAgent(task.ACTION_MAPPING)
     exp = EpisodicExperiment(task, agent)
     print 'Task Ready'
-    exp.doEpisodes(1)
-    print 'mm 2:', task.reward
+    exp.train(1)
     
     print "finished"
 

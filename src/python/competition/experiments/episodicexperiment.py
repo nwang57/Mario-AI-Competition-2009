@@ -26,7 +26,20 @@ from experiment import Experiment
 from experiment import Experiment
 
 class EpisodicExperiment(Experiment):
-    """ The extension of Experiment to handle episodic tasks. """
+    """ The extension of Experiment to handle episodic tasks. 
+        implement evaluation
+    """
+
+    def __init__(self, task, agent):
+        super(EpisodicExperiment, self).__init__(task, agent)
+        self.train_rewards = []
+        self.cur_state = None
+
+    def reset(self):
+        self.cur_state = None
+        self.stepid = 0
+        self.agent.newEpisode()
+        self.task.reset()
     
     def doEpisodes(self, number = 1):
         """ returns the rewards of each step as a list """
@@ -42,6 +55,24 @@ class EpisodicExperiment(Experiment):
                 rewards.append(r)
             all_rewards.append(rewards)
         return all_rewards
+
+
+    def train(self, num_episodes = 100):
+        for i in xrange(num_episodes):
+            self.reset()
+            while not self.task.isFinished():
+                self.stepid += 1
+                raw_obs = self.task.getObservation()
+                if len(raw_obs) == 2:
+                    next_state, reward = raw_obs
+                else:
+                    next_state = raw_obs
+                # perform update with cur, action, next, reward
+                # if self.cur_state is not None:
+                #     pass
+                self.cur_state = next_state
+                self.agent.integrateObservation(self.cur_state)
+                self.task.performAction(self.agent.getAction())
         
 
 #class EpisodicExperiment(Experiment):

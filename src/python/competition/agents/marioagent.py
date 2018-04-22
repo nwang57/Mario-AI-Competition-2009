@@ -34,4 +34,7 @@ class MarioAgent:
     def newEpisode(self):
         pass
 
+    def reset(self):
+        raise "Not implemented"
+
 

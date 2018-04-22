@@ -44,3 +44,12 @@ Human can use wasd and j, k to control mario
  ## Global options
 
  The default FPS is 24 so the delay is 41. We can change the delay in `MarioComponent.adjustFPS()`. 
+
+
+## Types of observation
+
+-10: fix ground
+-11: can jump to this ground
+2: enemy type 
+21: ?
+16: brick
