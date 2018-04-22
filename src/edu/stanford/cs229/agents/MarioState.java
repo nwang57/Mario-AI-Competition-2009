@@ -336,7 +336,7 @@ public class MarioState {
       //case GeneralizerLevelScene.BORDER_CANNOT_PASS_THROUGH:
       //case GeneralizerLevelScene.FLOWER_POT_OR_CANNON:
       //case GeneralizerLevelScene.LADDER:
-      default:
+      case 1:
         return true;
     }
     /* ************************** */
