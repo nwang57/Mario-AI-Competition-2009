@@ -40,10 +40,10 @@ package edu.stanford.cs229.agents;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.idsia.agents.Agent;
-import ch.idsia.agents.LearningAgent;
-import ch.idsia.benchmark.mario.environments.Environment;
-import ch.idsia.benchmark.tasks.LearningTask;
+import ch.idsia.ai.agents.Agent;
+import ch.idsia.ai.agents.LearningAgent;
+import ch.idsia.mario.environments.Environment;
+import ch.idsia.ai.tasks.LearningTask;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.MarioAIOptions;
 

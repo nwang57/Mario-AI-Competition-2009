@@ -1,6 +1,6 @@
 package edu.stanford.cs229.agents;
 
-import ch.idsia.benchmark.mario.engine.sprites.Mario;
+import ch.idsia.mario.engine.sprites.Mario;
 
 /**
  * Mario actions.

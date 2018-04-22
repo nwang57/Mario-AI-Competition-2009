@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import ch.idsia.benchmark.mario.engine.sprites.Mario;
-import ch.idsia.benchmark.tasks.BasicTask;
-import ch.idsia.benchmark.tasks.LearningTask;
+import ch.idsia.mario.engine.sprites.Mario;
+import ch.idsia.ai.tasks.BasicTask;
+import ch.idsia.ai.tasks.LearningTask;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.MarioAIOptions;
 

@@ -3,9 +3,9 @@ package edu.stanford.cs229.agents;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.idsia.benchmark.mario.engine.GeneralizerLevelScene;
-import ch.idsia.benchmark.mario.engine.sprites.Sprite;
-import ch.idsia.benchmark.mario.environments.Environment;
+import ch.idsia.mario.engine.GeneralizerLevelScene;
+import ch.idsia.mario.engine.sprites.Sprite;
+import ch.idsia.mario.environments.Environment;
 
 /**
  * Abstract representation of the game environment.

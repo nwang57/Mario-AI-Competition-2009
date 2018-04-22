@@ -5,7 +5,7 @@ import ch.idsia.ai.agents.RegisterableAgent;
 import ch.idsia.mario.environments.Environment;
 import ch.idsia.tools.EvaluationInfo;
 
-import edu.stanford.cs229.agents;
+import edu.stanford.cs229.agents.MarioState;
 
 import java.io.IOException;
 
