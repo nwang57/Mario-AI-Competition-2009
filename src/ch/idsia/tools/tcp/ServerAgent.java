@@ -5,6 +5,8 @@ import ch.idsia.ai.agents.RegisterableAgent;
 import ch.idsia.mario.environments.Environment;
 import ch.idsia.tools.EvaluationInfo;
 
+import edu.stanford.cs229.agents.MarioState;
+
 import java.io.IOException;
 
 /**
@@ -20,6 +22,7 @@ public class ServerAgent extends RegisterableAgent implements Agent
     Server server = null;
     private int port;
     private TCP_MODE tcpMode = TCP_MODE.SIMPLE_TCP;
+    private MarioState currState = new MarioState();
 
     public ServerAgent(int port, boolean enable)
     {
@@ -97,7 +100,11 @@ public class ServerAgent extends RegisterableAgent implements Agent
     {
         if (this.tcpMode == TCP_MODE.SIMPLE_TCP)
         {
-            this.sendRawObservation(observation);
+            //this.sendRawObservation(observation);
+            this.currState.update(observation);
+            long bitData = this.currState.getStateNumber();
+            String stateData = "X_" + bitData;
+            server.sendSafe(stateData);
         }
         else if (this.tcpMode == TCP_MODE.FAST_TCP)
         {

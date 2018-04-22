@@ -20,13 +20,8 @@ class Experiment(object):
 
     def _oneInteraction(self):
         self.stepid += 1
-        obs = self.task.getObservation()
-        self.agent.integrateObservation(obs)
-        act = self.agent.getAction()
-        print('aaaaah')
-        print(act)
-#        print "experiment.py self.agent.getAction(): ", self.agent.getAction(), "\n"
-        self.task.performAction(act)
+        self.agent.integrateObservation(self.task.getObservation())
+        self.task.performAction(self.agent.getAction())
         reward = self.task.getReward()
         self.agent.giveReward(reward)
         return reward, obs, act

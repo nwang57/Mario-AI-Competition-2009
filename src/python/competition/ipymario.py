@@ -27,20 +27,21 @@ def main():
     print(agent_name, filename, num_epi)
     pygame.init()
     pygame.display.set_mode([1,1])
+    task = MarioTask(initMarioMode = 2)
     if agent_name == 'human' :
-        agent = HumanAgent()
+        agent = HumanAgent(task.ACTION_MAPPING)
     else:
         agent = Forwardagent()
-    task = MarioTask(agent.name, initMarioMode = 2)
+    
     exp = EpisodicExperiment(task, agent)
     print 'Task Ready'
-    all_rewards, all_obs, all_action = exp.doEpisodes(num_epi)
+    exp.train(num_epi)
     print 'mm 2:', task.reward
     
     if agent_name == 'human':
         print (all_action)
         with open('./expert_data/' + filename + '_demo.pckl', 'wb') as f:
-            pickle.dump((all_obs, all_action), f)
+            pickle.dump((exp.all_states, exp.all_actions), f)
     print "finished"
     pygame.quit()
 #    clo = CmdLineOptions(sys.argv)

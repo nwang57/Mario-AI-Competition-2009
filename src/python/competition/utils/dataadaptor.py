@@ -111,7 +111,12 @@ def extractObservation(data):
 #               else:
 #                   print ' ',
 #            print 
-           
+       
         return (mayMarioJump, isMarioOnGround, marioFloats, enemiesFloats, levelScene, dummy)
+    elif(data[0] == 'X'):
+        bit_vec = list("{0:b}".format(int(data[1])))
+        max_len = 39
+        ret = [0]*(max_len - len(bit_vec)) + bit_vec
+        return ret
     else:
         raise "Wrong format or corrupted observation..."
