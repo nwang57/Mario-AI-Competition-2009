@@ -1,8 +1,8 @@
 package ch.idsia.tools.tcp;
 
-import ch.idsia.agents.Agent;
-import ch.idsia.agents.controllers.BasicMarioAIAgent;
-import ch.idsia.benchmark.mario.environments.Environment;
+import ch.idsia.ai.agents.Agent;
+import ch.idsia.ai.agents.RegisterableAgent;
+import ch.idsia.mario.environments.Environment;
 import ch.idsia.tools.EvaluationInfo;
 
 import edu.stanford.cs229.agents.MarioState;
@@ -17,7 +17,7 @@ import java.io.IOException;
  * Package: ch.idsia.tools.Network
  */
 
-public class ServerAgent extends BasicMarioAIAgent implements Agent
+public class ServerAgent extends RegisterableAgent implements Agent
 {
     Server server = null;
     private int port;
@@ -54,7 +54,7 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
     // A tiny bit of singletone-like concept. Server is created ones for each egent. Basically we are not going
     // To create more than one ServerAgent at a run, but this flexibility allows to add this feature with certain ease.
     private void createServer(int port) {
-        this.server = new Server(port, Environment.numberOfKeys);
+        this.server = new Server(port, Environment.numberOfObservationElements, Environment.numberOfButtons);
 //        this.name += server.getClientName();
     }
 
@@ -65,7 +65,7 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
 
     public void reset()
     {
-        action = new boolean[Environment.numberOfKeys];
+        action = new boolean[Environment.numberOfButtons];
         if (server == null)
             this.createServer(port);
     }
@@ -74,10 +74,10 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
     {
 //        byte[][] levelScene = observation.getLevelSceneObservation();
         // MERGED
-        byte[][] mergedObs = observation.getMergedObservationZZ(1, 1);
-        System.out.println("length " + mergedObs.length);
+        byte[][] mergedObs = observation.getCompleteObservation(/*1, 0*/);
+
         String tmpData = "O " +
-                observation.isMarioAbleToJump() + " " + observation.isMarioOnGround();
+                observation.mayMarioJump() + " " + observation.isMarioOnGround();
         for (int x = 0; x < mergedObs.length; ++x)
         {
             for (int y = 0; y < mergedObs.length; ++y)
@@ -96,61 +96,52 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
         // TODO: StateEncoderDecoder.Encode.Decode.  zip, gzip do not send mario position. zero instead for better compression.
     }
 
-    public void integrateObservation(Environment environment)
-    {
-           System.out.println("ServerAgent: sending observation...");
-        //    sendRawObservation(environment);
-        sendObservation(environment);
-    }
-
-
     private void sendObservation(Environment observation)
     {
-        // if (this.tcpMode == TCP_MODE.SIMPLE_TCP)
-        // {
+        if (this.tcpMode == TCP_MODE.SIMPLE_TCP)
+        {
             //this.sendRawObservation(observation);
             this.currState.update(observation);
             long bitData = this.currState.getStateNumber();
-            String stateData = "X " + bitData;
-            System.out.println(stateData);
+            String stateData = "X_" + bitData;
             server.sendSafe(stateData);
-        // }
-        // else if (this.tcpMode == TCP_MODE.FAST_TCP)
-        // {
-        //     this.sendBitmapObservation(observation);
-        // }
+        }
+        else if (this.tcpMode == TCP_MODE.FAST_TCP)
+        {
+            this.sendBitmapObservation(observation);
+        }
     }
 
-//     private void sendBitmapObservation(Environment observation)
-//     {
+    private void sendBitmapObservation(Environment observation)
+    {
         
-//         String tmpData =  "E" +
-//                           (observation.isMarioAbleToJump() ? "1" : "0")  +
-//                           (observation.isMarioOnGround() ? "1" : "0") +
-//                           observation.getBitmapLevelObservation();
-// //                          observation.getBitmapEnemiesObservation();
-//         int check_sum = 0;
-//         for (int i = 3; i < tmpData.length(); ++i)
-//         {
-//             char cur_char = tmpData.charAt(i);
-//             if (cur_char != 0)
-//             {
-// //                System.out.print(i + " ");
-// //                MathX.show(cur_char);
-//                 check_sum += Integer.valueOf(cur_char);
-//             }
-//         }
-//         if (tmpData.length() != /*125 - 61*/34)
-//             try {
-//                 throw new Exception("Pipetz!");
-//             } catch (Exception e) {
-//                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//                 System.err.println(e.getMessage());
-//             }
-//         tmpData += " " + check_sum;
-// //        System.out.println("tmpData size = " + tmpData.length());
-//         server.sendSafe(tmpData);
-//     }
+        String tmpData =  "E" +
+                          (observation.mayMarioJump() ? "1" : "0")  +
+                          (observation.isMarioOnGround() ? "1" : "0") +
+                          observation.getBitmapLevelObservation();
+//                          observation.getBitmapEnemiesObservation();
+        int check_sum = 0;
+        for (int i = 3; i < tmpData.length(); ++i)
+        {
+            char cur_char = tmpData.charAt(i);
+            if (cur_char != 0)
+            {
+//                System.out.print(i + " ");
+//                MathX.show(cur_char);
+                check_sum += Integer.valueOf(cur_char);
+            }
+        }
+        if (tmpData.length() != /*125 - 61*/34)
+            try {
+                throw new Exception("Pipetz!");
+            } catch (Exception e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                System.err.println(e.getMessage());
+            }
+        tmpData += " " + check_sum;
+//        System.out.println("tmpData size = " + tmpData.length());
+        server.sendSafe(tmpData);
+    }
 
     public void integrateEvaluationInfo(EvaluationInfo evaluationInfo)
     {
@@ -159,18 +150,18 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
                 evaluationInfo.computeDistancePassed() + " " +
                 evaluationInfo.timeLeft + " " +
                 evaluationInfo.marioMode + " " +
-                evaluationInfo.coinsGained + " ";
+                evaluationInfo.numberOfGainedCoins + " ";
         server.sendSafe(fitnessStr);
     }
 
     private boolean[] receiveAction() throws IOException, NullPointerException
     {
         String data = server.recvSafe();
-        boolean[] ret = new boolean[Environment.numberOfKeys];
         if (data == null || data.startsWith("reset"))
-            return ret;
+            return null;
+        boolean[] ret = new boolean[Environment.numberOfButtons];
 //        String s = "[";
-        for (int i = 0; i < Environment.numberOfKeys; ++i)
+        for (int i = 0; i < Environment.numberOfButtons; ++i)
         {
             ret[i] = (data.charAt(i) == '1');
 //            s += data.charAt(i);
@@ -181,15 +172,14 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
         return ret;
     }
 
-    public boolean[] getAction()
+    public boolean[] getAction(Environment observation)
     {
         try
         {
-           System.out.println("ServerAgent: sending observation...");
-        //    sendRawObservation(observation);
-            // sendObservation(observation);
+//            System.out.println("ServerAgent: sending observation...");
+//            sendRawObservation(observation);
+            sendObservation(observation);
             action = receiveAction();
-            printAction(action);
         }
         catch (IOException e)
         {
@@ -200,12 +190,8 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
         return action;
     }
 
-    public void printAction(boolean[] action) {
-        System.out.print("Server: ");
-        for( boolean v : action) {
-            System.out.print(v);
-        }
-        System.out.println("");
+    public AGENT_TYPE getType()
+    {
+        return Agent.AGENT_TYPE.TCP_SERVER;
     }
-
 }
