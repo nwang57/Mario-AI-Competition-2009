@@ -3,9 +3,9 @@ package edu.stanford.cs229.agents;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.idsia.mario.engine.GeneralizerLevelScene;
-import ch.idsia.mario.engine.sprites.Sprite;
-import ch.idsia.mario.environments.Environment;
+import ch.idsia.benchmark.mario.engine.GeneralizerLevelScene;
+import ch.idsia.benchmark.mario.engine.sprites.Sprite;
+import ch.idsia.benchmark.mario.environments.Environment;
 
 /**
  * Abstract representation of the game environment.
@@ -88,16 +88,10 @@ public class MarioState {
   public void update(Environment environment) {
 
     this.environment = environment;
-    /* ************************** */
-    //this.scene = environment.getMergedObservationZZ(1, 1);
-    this.scene = environment.getCompleteObservation();
-    /* ************************** */
+    this.scene = environment.getMergedObservationZZ(1, 1);
     
     // Update distance and elevation.
-    /* ************************** */
-    //int distance = environment.getEvaluationInfo().distancePassedPhys;
-    int distance = 0;
-    /* ************************** */
+    int distance = environment.getEvaluationInfo().distancePassedPhys;
     dDistance = distance - lastDistance;
     if (Math.abs(dDistance) <= LearningParams.MIN_MOVE_DISTANCE) {
       dDistance = 0;
@@ -128,22 +122,17 @@ public class MarioState {
       stuck.value = 1;
     }
     
-    /* ************************** */
-    collisionsWithCreatures.value = 0;
-        //environment.getEvaluationInfo().collisionsWithCreatures -
-        //lastCollisionsWithCreatures;
-    lastCollisionsWithCreatures = 0;
-        //environment.getEvaluationInfo().collisionsWithCreatures;
-    /* ************************** */
+    collisionsWithCreatures.value =
+        environment.getEvaluationInfo().collisionsWithCreatures -
+        lastCollisionsWithCreatures;
+    lastCollisionsWithCreatures =
+        environment.getEvaluationInfo().collisionsWithCreatures;
 
     // Fill can jump.
     ///*
-    /* ************************** */
     canJump.value =
-        //(!environment.isMarioOnGround() || environment.isMarioAbleToJump())
-        (!environment.isMarioOnGround() || environment.mayMarioJump())
+        (!environment.isMarioOnGround() || environment.isMarioAbleToJump())
         ? 1 : 0;
-    /* ************************** */
     //*/
     
     onGround.value = environment.isMarioOnGround() ? 1 : 0;
@@ -181,28 +170,18 @@ public class MarioState {
     }
     
     // Fill killed info.
-    /* ************************** */
-    enemiesKilledByStomp.value = 0 - killsByStomp;
-    //enemiesKilledByStomp.value = environment.getKillsByStomp() - killsByStomp;
-    /* ************************** */
+    enemiesKilledByStomp.value = environment.getKillsByStomp() - killsByStomp;
     
     // Only count killed by fire within our observation range.
     if (totalEnemiesCount < lastTotalEnemiesCount) {
-    /* ************************** */
-      enemiesKilledByFire.value = 0 - killsByFire;
-      //enemiesKilledByFire.value = environment.getKillsByFire() - killsByFire;
-    /* ************************** */
+      enemiesKilledByFire.value = environment.getKillsByFire() - killsByFire;
     } else {
       enemiesKilledByFire.value = 0;
     }
     
     lastTotalEnemiesCount = totalEnemiesCount;
-    /* ************************** */
-    killsByFire = 0;
-    //killsByFire = environment.getKillsByFire();
-    killsByStomp = 0;
-    //killsByStomp = environment.getKillsByStomp();
-    /* ************************** */
+    killsByFire = environment.getKillsByFire();
+    killsByStomp = environment.getKillsByStomp();
     //*/
     
     // Fill obstacle info.
@@ -233,19 +212,16 @@ public class MarioState {
       }
     }
     
-    /* ************************** */
-    float reward = 0;
-    //float reward = 
-    //    // Penalty to help Mario get out of stuck.
-    //    stuck.value * LearningParams.REWARD_PARAMS.stuck +
-    //    // Reward for making forward and upward progress.
-    //    rewardScaler * dDistance * LearningParams.REWARD_PARAMS.distance +
-    //    rewardScaler * dElevation * LearningParams.REWARD_PARAMS.elevation +
-    //    // Reward for killing/avoiding enemies.
-    //    collisionsWithCreatures.value * LearningParams.REWARD_PARAMS.collision +
-    //    enemiesKilledByFire.value * LearningParams.REWARD_PARAMS.killedByFire +
-    //    enemiesKilledByStomp.value * LearningParams.REWARD_PARAMS.killedByStomp;
-    /* ************************** */
+    float reward = 
+        // Penalty to help Mario get out of stuck.
+        stuck.value * LearningParams.REWARD_PARAMS.stuck +
+        // Reward for making forward and upward progress.
+        rewardScaler * dDistance * LearningParams.REWARD_PARAMS.distance +
+        rewardScaler * dElevation * LearningParams.REWARD_PARAMS.elevation +
+        // Reward for killing/avoiding enemies.
+        collisionsWithCreatures.value * LearningParams.REWARD_PARAMS.collision +
+        enemiesKilledByFire.value * LearningParams.REWARD_PARAMS.killedByFire +
+        enemiesKilledByStomp.value * LearningParams.REWARD_PARAMS.killedByStomp;
     
     Logger.println(2, "D: " + dDistance);
     Logger.println(2, "H:" + dElevation);
@@ -255,10 +231,7 @@ public class MarioState {
   }
   
   public boolean canJump() {
-    /* ************************** */
-    return environment.mayMarioJump();
-    //return environment.isMarioAbleToJump();
-    /* ************************** */
+    return environment.isMarioAbleToJump();
   }
   
   /**
@@ -330,24 +303,18 @@ public class MarioState {
   }
   
   private boolean isObstacle(int x, int y) {
-    /* ************************** */
     switch(scene[y][x]) {
-      //case GeneralizerLevelScene.BRICK:
-      //case GeneralizerLevelScene.BORDER_CANNOT_PASS_THROUGH:
-      //case GeneralizerLevelScene.FLOWER_POT_OR_CANNON:
-      //case GeneralizerLevelScene.LADDER:
-      case 1:
+      case GeneralizerLevelScene.BRICK:
+      case GeneralizerLevelScene.BORDER_CANNOT_PASS_THROUGH:
+      case GeneralizerLevelScene.FLOWER_POT_OR_CANNON:
+      case GeneralizerLevelScene.LADDER:
         return true;
     }
-    /* ************************** */
     return false;
   }
   
   private boolean isGround(int x, int y) {
-    /* ************************** */
-    //return isObstacle(x, y) || scene[y][x] == GeneralizerLevelScene.BORDER_HILL;
-    return true;
-    /* ************************** */
+    return isObstacle(x, y) || scene[y][x] == GeneralizerLevelScene.BORDER_HILL;
   }
   
   public static class Direction {

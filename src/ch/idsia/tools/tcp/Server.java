@@ -29,7 +29,6 @@ public class Server
 
     enum STATUS {SUCCEED, ERROR_SENDING, ERROR_RECEIVING}
     private int port;
-    private int requiredSentDataSize = 1;
     private int requiredReceiveDataSize = 1;
     private List<Integer> trustedLengths = null; // TODO:SK trustedLengths
 
@@ -38,10 +37,10 @@ public class Server
     ServerSocket serverSocket = null;
     private Socket socket = null;
 
-    public Server(int port, int requiredSentDataSize, int requiredReceiveDataSize)
+    public Server(int port, int requiredReceiveDataSize)
     {
         this.port = port;
-        this.requiredSentDataSize = requiredSentDataSize;
+        System.out.println(requiredReceiveDataSize);
         this.requiredReceiveDataSize = requiredReceiveDataSize;
         reset();
     }
