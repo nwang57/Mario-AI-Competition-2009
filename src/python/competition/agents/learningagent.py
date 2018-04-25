@@ -1,0 +1,82 @@
+import numpy
+
+from marioagent import MarioAgent
+import pdb
+import pygame
+import numpy as np
+import argparse
+import gym
+from collections import deque
+from config import Config
+from model import Model
+
+
+class LearningAgent(MarioAgent):
+    """ In fact the Python twin of the
+        corresponding Java ForwardAgent.
+    """
+        
+
+    def __init__(self, dim_obs, dim_action):
+        self.config = Config()
+        self.obs = None
+        self.model = Model(dim_action, dim_obs,  self.config, self.model_name, demo_mode=demo)
+        self.eps = self.config.INITIAL_EPS
+        self.burn_in_size = self.config.BURN_IN_SIZE
+        self.inv_gamma = 1.0 / self.config.GAMMA
+        self.n_pow_gamma = self.config.GAMMA ** self.config.N_STEP
+        self.step = 0
+        self.burn_in_cur_size = 0
+    
+        """Constructor"""
+
+    def integrateObservation(self, obs):
+        self.obs = obs
+        pass
+
+    def getAction(self):
+        if self.burn_in_cur_size < self.burn_in_size:
+            action = np.random.randint(self.action_dim)
+        else:
+            action = self.epsilon_greedy_action(self.obs)
+        return action
+
+    def update_network(self, cur_obs, reward, action, next_obs, pretrain=False):
+        self.perceive(cur_obs, reward, action, next_obs)
+        self.model.train(pretrain=pretrain)
+        self.model.update_target(self.step)
+        self.update_eps()
+        self.step += 1
+
+    def epsilon_greedy_action(self, state):
+        p = np.random.random_sample()
+        q_values = self.model.predict(state)
+        if p <= self.eps:
+            action = np.random.randint(self.action_dim)
+        else:
+            action = np.argmax(q_values, axis=1)[0]
+        return action
+
+    def update_eps(self):
+        delta = (self.config.INITIAL_EPS - self.config.FINAL_EPS) / 500000
+        if self.eps > self.config.FINAL_EPS:
+            self.eps -= delta
+
+    def perceive(self, cur_obs, reward, action, next_obs):
+        """
+            Append the transition to the replay buffer
+        """
+        self.model.perceive([cur_obs, reward, action, next_obs])
+        
+        
+    def cal_discount_reward(self, reward_queue):
+        weight = 1
+        ret = 0.0
+        for r in reward_queue:
+            ret += weight * r
+            weight *= self.config.GAMMA
+        return ret
+
+   
+
+
