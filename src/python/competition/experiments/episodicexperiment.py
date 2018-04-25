@@ -64,11 +64,12 @@ class EpisodicExperiment(Experiment):
             self.reset()
             while not self.task.isFinished():
                 self.stepid += 1
-                raw_obs = self.task.getObservation()
+                raw_obs= self.task.getObservation()
                 if len(raw_obs) == 2:
                     next_state, reward = raw_obs
                     if self.cur_state is not None:
                         self.agent.update_network(self.cur_state, next_state, reward, self.action, pretrain=False)
+
                 else:
                     next_state = raw_obs
                 # perform update with cur, action, next, reward
@@ -78,7 +79,7 @@ class EpisodicExperiment(Experiment):
                 self.agent.integrateObservation(self.cur_state)
                 self.action = self.agent.getAction()
                 self.task.performAction(self.action)
-                
+
                 
         
 

@@ -72,7 +72,8 @@ class HumanAgent(MarioAgent):
             # print(obs)
             self.isEpisodeOver = True
         else:
-            self.obs = obs
+            self.obs = obs[0]
+            self.reward = obs[1]
 
     def printObs(self):
         """for debug"""

@@ -53,7 +53,7 @@ class MarioTask(EpisodicTask):
             # obs = (state, reward)
             self.cur_reward = obs[1]
             return obs
-        return obs
+        return obs, None
     
     def performAction(self, action):
         if not self.isFinished():
