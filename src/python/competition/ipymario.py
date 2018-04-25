@@ -7,6 +7,7 @@ from experiments.episodicexperiment import EpisodicExperiment
 from tasks.mariotask import MarioTask
 from agents.forwardagent import ForwardAgent
 from agents.humanAgent import HumanAgent
+from agents.learningagent import LearningAgent
 from agents.forwardrandomagent import ForwardRandomAgent
 import pygame
 
@@ -16,9 +17,30 @@ import pygame
 # with creatures, without creatures HIGH.
 # send creatures.
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Deep Q Network Argument Parser')
+    parser.add_argument('--agent',dest='train',type=str,default='human')
+    parser.add_argument('--model',dest='model',type=str)
+    parser.add_argument('--output', dest='output_file',type=str)
+    parser.add_argument('--memory', dest='memory_mode',type=int)
+    return parser.parse_args()
+
 def main():
+    args = parse_arguments()
+    agent_name = args.agent
+    render = args.render
+    model = args.model
+
     task = MarioTask(initMarioMode = 2)
-    agent = HumanAgent(task.ACTION_MAPPING, task.obs_space)
+
+    agent = None
+    if agent is 'human':
+        agent = HumanAgent(task.ACTION_MAPPING, task.obs_space)
+    elif agent is 'learning':
+    	dim_obs = 39
+    	dim_action = len(task.ACTION_MAPPING)
+        agent = LearningAgent(dim_obs, dim_action, model)
+
     exp = EpisodicExperiment(task, agent)
     print 'Task Ready'
     exp.train(5)

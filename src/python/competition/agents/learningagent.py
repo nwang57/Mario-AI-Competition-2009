@@ -17,10 +17,10 @@ class LearningAgent(MarioAgent):
     """
         
 
-    def __init__(self, dim_obs, dim_action):
+    def __init__(self, dim_obs, dim_action, model_name):
         self.config = Config()
         self.obs = None
-        self.model = Model(dim_action, dim_obs,  self.config, self.model_name, demo_mode=demo)
+        self.model = Model(dim_action, dim_obs, self.config, model_name, demo_mode=False)
         self.eps = self.config.INITIAL_EPS
         self.burn_in_size = self.config.BURN_IN_SIZE
         self.inv_gamma = 1.0 / self.config.GAMMA
@@ -43,8 +43,8 @@ class LearningAgent(MarioAgent):
 
     def update_network(self, cur_obs, reward, action, next_obs, pretrain=False):
         self.perceive(cur_obs, reward, action, next_obs)
-        self.model.train(pretrain=pretrain)
-        self.model.update_target(self.step)
+        self.model.train(self.step, pretrain=pretrain)
+        #self.model.update_target(self.step)
         self.update_eps()
         self.step += 1
 

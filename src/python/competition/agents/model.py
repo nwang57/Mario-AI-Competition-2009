@@ -172,11 +172,15 @@ class Model():
         return self.memory.append(transition)
 
 
-    def train(self, pretrain=False):
+    def train(self, n_iter, pretrain=False):
         if self.demo_mode:
             self.train_with_demo(pretrain=pretrain)
         else:
             self.train_no_demo()
+
+        if self.model_name == 'ddqn':
+            update_target(self, n_iter)
+
         # writer = tf.summary.FileWriter('./log', self.sess.graph)
         # writer.close()
 
