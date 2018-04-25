@@ -99,4 +99,7 @@ public boolean[] getAction()
 
     return action;
 }
+public void setFinished() {
+    
+}
 }

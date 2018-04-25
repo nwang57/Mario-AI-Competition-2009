@@ -14,7 +14,7 @@ class HumanAgent(MarioAgent):
     KEY_JUMP = 3
     KEY_SPEED = 4
 
-    def __init__(self, action_mapping):
+    def __init__(self, action_mapping, num_output):
         """Constructor"""
         pygame.init()
         pygame.display.set_mode([1,1])

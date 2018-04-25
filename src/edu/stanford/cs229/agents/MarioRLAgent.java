@@ -131,6 +131,9 @@ public class MarioRLAgent implements LearningAgent {
           currentState.calculateReward(), currentState.getStateNumber());
     }
   }
+  public void setFinished() {
+
+  }
   
   private void learnOnce() {
     Logger.println(1, "================================================");
@@ -263,4 +266,5 @@ public class MarioRLAgent implements LearningAgent {
   public void giveIntermediateReward(float intermediateReward) {
     // TODO Auto-generated method stub
   }
+  
 }

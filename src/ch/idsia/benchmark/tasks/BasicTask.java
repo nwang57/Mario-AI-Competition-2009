@@ -120,24 +120,25 @@ public void setOptionsAndReset(final String options)
 
 public void doEpisodes(int amount, boolean verbose, final int repetitionsOfSingleEpisode)
 {
-    for (int j = 0; j < EvaluationInfo.numberOfElements; j++)
-    {
-        statistics.addElement(new StatisticalSummary());
-    }
-    for (int i = 0; i < amount; ++i)
+    // for (int j = 0; j < EvaluationInfo.numberOfElements; j++)
+    // {
+    //     statistics.addElement(new StatisticalSummary());
+    // }
+    // for (int i = 0; i < amount; ++i)
+    while(true)
     {
         this.reset();
         this.runSingleEpisode(repetitionsOfSingleEpisode);
         if (verbose)
             System.out.println(environment.getEvaluationInfoAsString());
-
-        for (int j = 0; j < EvaluationInfo.numberOfElements; j++)
-        {
-            statistics.get(j).add(environment.getEvaluationInfoAsInts()[j]);
-        }
+        agent.setFinished();
+        // for (int j = 0; j < EvaluationInfo.numberOfElements; j++)
+        // {
+        //     statistics.get(j).add(environment.getEvaluationInfoAsInts()[j]);
+        // }
     }
 
-    System.out.println(statistics.get(3).toString());
+    // System.out.println(statistics.get(3).toString());
 }
 
 public boolean isFinished()

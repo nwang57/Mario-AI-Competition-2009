@@ -32,4 +32,7 @@ public void reset()
     action[Mario.KEY_RIGHT] = true;
     action[Mario.KEY_SPEED] = true;
 }
+public void setFinished() {
+    
+}
 }

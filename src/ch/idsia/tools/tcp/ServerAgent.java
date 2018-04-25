@@ -65,6 +65,7 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
 
     public void reset()
     {
+        isFinished = false;
         action = new boolean[Environment.numberOfKeys];
         if (server == null)
             this.createServer(port);
@@ -98,9 +99,10 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
 
     public void integrateObservation(Environment environment)
     {
-           System.out.println("ServerAgent: sending observation...");
         //    sendRawObservation(environment);
-        sendObservation(environment);
+
+            sendObservation(environment);
+        
     }
 
 
@@ -121,6 +123,10 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
         // {
         //     this.sendBitmapObservation(observation);
         // }
+    }
+
+    public void setFinished() {
+        server.sendSafe("FIN");
     }
 
 //     private void sendBitmapObservation(Environment observation)
@@ -187,11 +193,9 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
     {
         try
         {
-           System.out.println("ServerAgent: sending observation...");
         //    sendRawObservation(observation);
             // sendObservation(observation);
             action = receiveAction();
-            printAction(action);
         }
         catch (IOException e)
         {

@@ -55,4 +55,5 @@ public void setObservationDetails(int rfWidth, int rfHeight, int egoRow, int ego
 public String getName();
 
 public void setName(String name);
+public void setFinished();
 }

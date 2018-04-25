@@ -46,10 +46,6 @@ Human can use wasd and j, k to control mario
  The default FPS is 24 so the delay is 41. We can change the delay in `MarioComponent.adjustFPS()`. 
 
 
-## Types of observation
+## Episode control
 
--10: fix ground
--11: can jump to this ground
-2: enemy type 
-21: ?
-16: brick
+`Main.java` will create a new basic task and provides the level and number of repeat for one episode

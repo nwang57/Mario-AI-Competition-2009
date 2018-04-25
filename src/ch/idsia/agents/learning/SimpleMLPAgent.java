@@ -168,4 +168,7 @@ private double probe(int x, int y, byte[][] scene)
     int realY = y + 11;
     return (scene[realX][realY] != 0) ? 1 : 0;
 }
+public void setFinished() {
+    
+}
 }

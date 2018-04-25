@@ -99,6 +99,10 @@ public void keyReleased(KeyEvent e)
     toggleKey(e.getKeyCode(), false);
 }
 
+public void setFinished() {
+
+}
+
 private void toggleKey(int keyCode, boolean isPressed)
 {
     switch (keyCode)

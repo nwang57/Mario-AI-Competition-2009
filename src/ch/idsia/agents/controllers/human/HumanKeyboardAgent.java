@@ -117,6 +117,10 @@ public void giveIntermediateReward(float intermediateReward)
 
 }
 
+public void setFinished() {
+
+}
+
 public void reset()
 {
     // Just check you keyboard. Especially arrow buttons and 'A' and 'S'!

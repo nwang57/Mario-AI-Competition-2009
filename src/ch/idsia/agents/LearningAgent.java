@@ -51,4 +51,6 @@ public void setEvaluationQuota(long num);
 public Agent getBestAgent();
 
 public void init(); // TODO: remove it as redundant
+
+public void setFinished();
 }

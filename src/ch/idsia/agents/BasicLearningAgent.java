@@ -87,4 +87,7 @@ public void init()
 {
 
 }
+public void setFinished() {
+    
+}
 }

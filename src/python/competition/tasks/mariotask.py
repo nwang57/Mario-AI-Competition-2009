@@ -27,6 +27,7 @@ class MarioTask(EpisodicTask):
     def __init__(self, *args, **kwargs):
         EpisodicTask.__init__(self, MarioEnvironment(*args, **kwargs))
         self.action_space = len(self.ACTION_MAPPING)
+        self.obs_space = 39
         #self.reset()
     
     def reset(self):

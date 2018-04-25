@@ -74,6 +74,10 @@ public boolean[] getAction()
     return action;
 }
 
+public void setFinished() {
+
+}
+
 public void integrateObservation(final Environment environment)
 {}
 

@@ -40,6 +40,7 @@ import ch.idsia.benchmark.mario.environments.Environment;
 public class BasicMarioAIAgent implements Agent
 {
 protected boolean action[] = new boolean[Environment.numberOfKeys];
+protected boolean isFinished = false;
 protected String name = "Instance_of_BasicAIAgent._Change_this_name";
 
 /*final*/
@@ -156,6 +157,10 @@ public int getReceptiveFieldCellValue(int x, int y)
         return 0;
 
     return levelScene[x][y];
+}
+
+public void setFinished() {
+    isFinished = true;
 }
 //    public void integrateObservation(int[] serializedLevelSceneObservationZ, int[] serializedEnemiesObservationZ, float[] marioFloatPos, float[] enemiesFloatPos, int[] marioState)
 //    {

@@ -62,16 +62,18 @@ class EpisodicExperiment(Experiment):
     def train(self, num_episodes = 100):
         for i in xrange(num_episodes):
             self.reset()
-            while not self.task.isFinished():
+            while True:
                 self.stepid += 1
                 raw_obs= self.task.getObservation()
                 if len(raw_obs) == 2:
                     next_state, reward = raw_obs
+                    if reward is None:
+                        # episode finish
+                        break
                     if self.cur_state is not None:
                         self.agent.update_network(self.cur_state, next_state, reward, self.action, pretrain=False)
-
                 else:
-                    next_state = raw_obs
+                    raise KeyError("obs len wrong")
                 # perform update with cur, action, next, reward
                 # if self.cur_state is not None:
                 #     pass

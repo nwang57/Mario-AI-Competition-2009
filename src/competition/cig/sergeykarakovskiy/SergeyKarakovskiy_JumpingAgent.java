@@ -64,4 +64,8 @@ public void reset()
 public String getName() { return name; }
 
 public void setName(String Name) { this.name = Name; }
+
+public void setFinished() {
+    
+}
 }

@@ -81,4 +81,7 @@ public boolean[] getAction(Environment observation)
 public String getName() { return Name; }
 
 public void setName(String Name) { this.Name = Name; }
+public void setFinished() {
+    
+}
 }

@@ -18,10 +18,10 @@ import pygame
 
 def main():
     task = MarioTask(initMarioMode = 2)
-    agent = HumanAgent(task.ACTION_MAPPING)
+    agent = HumanAgent(task.ACTION_MAPPING, task.obs_space)
     exp = EpisodicExperiment(task, agent)
     print 'Task Ready'
-    exp.train(1)
+    exp.train(5)
     
     print "finished"
 

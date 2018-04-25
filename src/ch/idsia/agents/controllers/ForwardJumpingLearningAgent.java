@@ -17,6 +17,10 @@ public class ForwardJumpingLearningAgent implements LearningAgent{
     return action;
   }
 
+  public void setFinished() {
+
+  }
+
   @Override
   public void integrateObservation(Environment environment) {
     // TODO Auto-generated method stub

@@ -128,4 +128,8 @@ public void integrateObservation(int[] serializedLevelSceneObservationZ, int[] s
 {
 
 }
+
+public void setFinished() {
+    
+}
 }
