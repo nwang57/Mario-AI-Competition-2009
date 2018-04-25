@@ -13,8 +13,8 @@
     <tstamp/>
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build}"/>
-    <copy todir="${build}/ch/idsia/mario/engine/resources">
-      <fileset dir="${src}/ch/idsia/mario/engine/resources">
+    <copy todir="${build}/ch/idsia/benchmark/mario/engine/resources">
+        <fileset dir="${src}/ch/idsia/benchmark/mario/engine/resources">
         <exclude name="**/*.java"/>
       </fileset>
     </copy>
@@ -33,19 +33,6 @@
       </classpath>
     </javac>
   </target>
-  <target name="play" depends="compile"
-        description="tests Mario whether it works" >
-    <!-- Create the distribution directory -->
-    <java classname="ch.idsia.scenarios.Play" dir="${build}" failonerror="false" fork="true">
-      <classpath>
-         <fileset dir="${lib}">
-           <include name="**/*.jar" />
-         </fileset>
-           <pathelement location="${build}" />
-      </classpath>
-    </java>
-  </target>
-
   <target name="clean"
         description="clean up" >
     <!-- Delete the ${build} and ${dist} directory trees -->

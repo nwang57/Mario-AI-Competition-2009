@@ -1,8 +1,10 @@
 classes
+*.DS_Store
 *.svn
 .classpath
 .project
 .pydevproject
 web/jdom.jar
 web/playForever.jar
+src-2009/
 *Agent-s*d*/
