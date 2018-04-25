@@ -13,7 +13,7 @@ Then we use `ant` to build the project in the root directiory.
 Run following commands to launch the server
 ```
 cd classes
-java ch.idsia.scenarios.MainRun -ag ServerAgent -server on
+java -cp .:../lib/asm-all-3.3.jar ch.idsia.scenarios.Main -ag ServerAgent
 ```
 
 ## Set up Client
