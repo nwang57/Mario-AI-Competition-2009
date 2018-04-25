@@ -112,7 +112,9 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
             this.currState.update(observation);
             long bitData = this.currState.getStateNumber();
             String stateData = "X " + bitData;
-            System.out.println(stateData);
+            float reward = this.currState.calculateReward();
+            stateData += " " + reward;
+            // System.out.println(stateData);
             server.sendSafe(stateData);
         // }
         // else if (this.tcpMode == TCP_MODE.FAST_TCP)

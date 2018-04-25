@@ -62,9 +62,10 @@ class EpisodicExperiment(Experiment):
             self.reset()
             while not self.task.isFinished():
                 self.stepid += 1
-                raw_obs = self.task.getObservation()
+                raw_obs= self.task.getObservation()
                 if len(raw_obs) == 2:
                     next_state, reward = raw_obs
+                    print(raw_obs)
                 else:
                     next_state = raw_obs
                 # perform update with cur, action, next, reward
