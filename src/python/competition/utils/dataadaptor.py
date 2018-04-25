@@ -59,7 +59,9 @@ def extractObservation(data):
     levelScene = numpy.empty(shape = (19, 19), dtype = numpy.int)
     enemiesFloats = []
     dummy = 0
-    if(data[0] == 'E'): #Encoded observation, fastTCP mode, have to be decoded
+    if (data == ""):
+        return [0] * 5
+    elif(data[0] == 'E'): #Encoded observation, fastTCP mode, have to be decoded
 #        assert len(data) == eobsLength
         mayMarioJump = (data[1] == '1')
         isMarioOnGround = (data[2] == '1')
