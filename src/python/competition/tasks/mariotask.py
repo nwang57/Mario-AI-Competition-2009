@@ -58,10 +58,11 @@ class MarioTask(EpisodicTask):
     
     def performAction(self, action):
         if not self.isFinished():
-            if type(action) is int:
-                EpisodicTask.performAction(self, self.ACTION_MAPPING[action])           
+            if type(action) is list:
+                print("in mariotask ", action, type(action))
+                EpisodicTask.performAction(self, action)
             else:
-                EpisodicTask.performAction(self, action)           
+                EpisodicTask.performAction(self, self.ACTION_MAPPING[action])        
 
     def getReward(self):
         """ custome reward for each transition """

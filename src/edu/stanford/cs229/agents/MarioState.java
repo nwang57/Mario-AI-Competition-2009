@@ -245,7 +245,7 @@ public class MarioState {
     stateNumber = 0;
     int i = 0;
     for (Field field : fields) {
-      stateNumber += field.getInt() << i;
+      stateNumber += (long)field.getInt() << i;
       i += field.getNBits();
     }
     if (i >= Long.SIZE) {

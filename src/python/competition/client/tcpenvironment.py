@@ -50,6 +50,7 @@ class TCPEnvironment(Environment):
     def performAction(self, action):
         """takes a numpy array of ints and sends as a string to server"""
         actionStr = ""
+        print(action)
         for i in range(5):
             if action[i] == 1:
                 actionStr += '1'
