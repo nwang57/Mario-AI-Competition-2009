@@ -71,7 +71,7 @@ class EpisodicExperiment(Experiment):
                         # episode finish
                         break
                     if self.cur_state is not None:
-                        self.agent.update_network(self.cur_state, next_state, reward, self.action, pretrain=False)
+                        self.agent.update_network(self.cur_state, self.action, reward, next_state, pretrain=False)
                 else:
                     raise KeyError("obs len wrong")
                 # perform update with cur, action, next, reward

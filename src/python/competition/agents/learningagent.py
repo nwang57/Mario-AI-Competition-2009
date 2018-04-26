@@ -46,8 +46,8 @@ class LearningAgent(MarioAgent):
             action = self.epsilon_greedy_action(self.obs)
         return action
 
-    def update_network(self, cur_obs, reward, action, next_obs, pretrain=False):
-        self.perceive(cur_obs, reward, action, next_obs)
+    def update_network(self, cur_obs, action, reward, next_obs, pretrain=False):
+        self.perceive(cur_obs, action, reward, next_obs)
         if self.burn_in_cur_size < self.burn_in_size:
             self.burn_in_cur_size += 1
             if self.burn_in_cur_size % 1000 == 0:
@@ -72,11 +72,12 @@ class LearningAgent(MarioAgent):
         if self.eps > self.config.FINAL_EPS:
             self.eps -= delta
 
-    def perceive(self, cur_obs, reward, action, next_obs):
+    def perceive(self, cur_obs, action, reward, next_obs):
         """
             Append the transition to the replay buffer
         """
-        self.model.perceive([cur_obs, reward, action, next_obs, False])
+        #s_t0, a_t0, r_t1, s_t1, d_t0
+        self.model.perceive([cur_obs, action, reward, next_obs, False])
         
         
     def cal_discount_reward(self, reward_queue):
