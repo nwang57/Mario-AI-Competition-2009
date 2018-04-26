@@ -19,6 +19,7 @@ class LearningAgent(MarioAgent):
     def __init__(self, dim_obs, dim_action, model_name):
         self.config = Config()
         self.obs = None
+        self.action_dim = dim_action
         self.model = Model(dim_action, dim_obs, self.config, model_name, demo_mode=False)
         self.eps = self.config.INITIAL_EPS
         self.burn_in_size = self.config.BURN_IN_SIZE
@@ -29,8 +30,12 @@ class LearningAgent(MarioAgent):
     
         """Constructor"""
 
+    def reset(self):
+        self.isEpisodeOver = 0
+        self.obs = None
+
+
     def integrateObservation(self, obs):
-        self.obs = obs
         pass
 
     def getAction(self):

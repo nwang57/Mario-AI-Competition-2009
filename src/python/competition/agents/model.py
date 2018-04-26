@@ -1,14 +1,15 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import tensorflow as tf
 import numpy as np
 import h5py, sys, copy, argparse
 from numpy import random
 import math
 import json
-import matplotlib.pyplot as plt
 from memory import prioritizedMemory, classicMemory
 from config import Config
 import functools
+
 
 '''
 1. segtree needs to find values from idxes

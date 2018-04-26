@@ -10,6 +10,7 @@ from agents.humanAgent import HumanAgent
 from agents.learningagent import LearningAgent
 from agents.forwardrandomagent import ForwardRandomAgent
 import pygame
+import argparse
 
 
 #from pybrain.... episodic import EpisodicExperiment
@@ -19,7 +20,7 @@ import pygame
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Deep Q Network Argument Parser')
-    parser.add_argument('--agent',dest='train',type=str,default='human')
+    parser.add_argument('--agent',dest='agent',type=str,default='human')
     parser.add_argument('--model',dest='model',type=str)
     parser.add_argument('--output', dest='output_file',type=str)
     parser.add_argument('--memory', dest='memory_mode',type=int)
@@ -28,22 +29,22 @@ def parse_arguments():
 def main():
     args = parse_arguments()
     agent_name = args.agent
-    render = args.render
     model = args.model
 
     task = MarioTask(initMarioMode = 2)
 
-    agent = None
-    if agent is 'human':
+    print agent_name
+    if agent_name == 'human':
         agent = HumanAgent(task.ACTION_MAPPING, task.obs_space)
-    elif agent is 'learning':
+        exp = EpisodicExperiment(task, agent)
+        exp.run(5)
+    elif agent_name == 'learning':
+        print "hello"
     	dim_obs = 39
     	dim_action = len(task.ACTION_MAPPING)
         agent = LearningAgent(dim_obs, dim_action, model)
-
-    exp = EpisodicExperiment(task, agent)
-    print 'Task Ready'
-    exp.train(5)
+        exp = EpisodicExperiment(task, agent)
+        exp.train(5)
     
     print "finished"
 

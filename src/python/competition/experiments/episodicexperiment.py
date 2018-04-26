@@ -40,7 +40,7 @@ class EpisodicExperiment(Experiment):
         self.cur_state = None
         self.action = None
         self.stepid = 0
-        self.agent.newEpisode()
+        self.agent.reset()
         self.task.reset()
     
     def doEpisodes(self, number = 1):
@@ -82,7 +82,25 @@ class EpisodicExperiment(Experiment):
                 self.action = self.agent.getAction()
                 self.task.performAction(self.action)
 
-                
+    def run(self, num_episodes = 100):
+        for i in xrange(num_episodes):
+            self.reset()
+            while True:
+                self.stepid += 1
+                raw_obs= self.task.getObservation()
+                if len(raw_obs) == 2:
+                    next_state, reward = raw_obs
+                    if reward is None:
+                        # episode finish
+                        break
+                else:
+                    raise KeyError("obs len wrong")
+                # perform update with cur, action, next, reward
+                # if self.cur_state is not None:
+                #     pass
+                self.cur_state = next_state
+                self.action = self.agent.getAction()
+                self.task.performAction(self.action)             
         
 
 #class EpisodicExperiment(Experiment):
