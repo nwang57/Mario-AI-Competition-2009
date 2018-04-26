@@ -47,6 +47,9 @@ class LearningAgent(MarioAgent):
 
     def update_network(self, cur_obs, reward, action, next_obs, pretrain=False):
         self.perceive(cur_obs, reward, action, next_obs)
+        if self.burn_in_cur_size < self.burn_in_size:
+            self.burn_in_cur_size += 1
+            return
         self.model.train(self.step, pretrain=pretrain)
         #self.model.update_target(self.step)
         self.update_eps()
@@ -80,7 +83,3 @@ class LearningAgent(MarioAgent):
             ret += weight * r
             weight *= self.config.GAMMA
         return ret
-
-   
-
-
