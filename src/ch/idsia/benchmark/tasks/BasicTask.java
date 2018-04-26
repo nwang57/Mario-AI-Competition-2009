@@ -80,8 +80,10 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
                 agent.integrateObservation(environment);
                 agent.giveIntermediateReward(environment.getIntermediateReward());
                 boolean[] action = agent.getAction();
-                if (System.currentTimeMillis() - c > COMPUTATION_TIME_BOUND)
-                    return false;
+                // if (System.currentTimeMillis() - c > COMPUTATION_TIME_BOUND) {
+                //    System.out.println(System.currentTimeMillis() - c);
+                //    return false;
+                // }
 
                 // System.out.println("action = " + Arrays.toString(action));
 //              environment.setRecording(GlobalOptions.isRecording);
@@ -128,9 +130,12 @@ public void doEpisodes(int amount, boolean verbose, final int repetitionsOfSingl
     while(true)
     {
         this.reset();
-        this.runSingleEpisode(repetitionsOfSingleEpisode);
-        if (verbose)
+        boolean ret = this.runSingleEpisode(repetitionsOfSingleEpisode);
+        if (verbose) {
             System.out.println(environment.getEvaluationInfoAsString());
+            System.out.println(ret);
+        }
+
         agent.setFinished();
         // for (int j = 0; j < EvaluationInfo.numberOfElements; j++)
         // {

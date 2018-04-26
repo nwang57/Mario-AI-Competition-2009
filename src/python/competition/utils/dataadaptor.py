@@ -54,6 +54,7 @@ def extractObservation(data):
     """
      parse the array of strings and return array 22 by 22 of doubles
     """
+    print(data)
     obsLength = 364
     levelScene = numpy.empty(shape = (19, 19), dtype = numpy.int)
     enemiesFloats = []
@@ -118,7 +119,8 @@ def extractObservation(data):
         bit_vec = list("{0:b}".format(int(data[1])))
         max_len = 39
         ret = ['0']*(max_len - len(bit_vec)) + bit_vec
+        int_ret = [int(c) for c in ret]
         reward = float(data[2])
-        return (ret, reward)
+        return (int_ret, reward)
     else:
         raise "Wrong format or corrupted observation..."

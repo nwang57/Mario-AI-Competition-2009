@@ -99,7 +99,7 @@ public class Server
 
     private void send(String message)
     {
-//        System.out.println("Server.send() >> Sedning message: " + message);
+       System.out.println("Server.send() >> Sedning message: " + message);
         out.print(message);
 //        System.out.println("Server: " + message.length() + " bytes of data had been sent");
         if (out.checkError())
@@ -144,12 +144,13 @@ public class Server
     {
         String ret = null;
         try {
-//            System.out.println("Server.recv() >> Looking forward to receive data");
+        //    System.out.println("Server.recv() >> Looking forward to receive data");
             ret = in.readLine();
             if (ret == null)
             {
                 throw new NullPointerException();
             }
+            System.out.println("Server.recv() >> " + ret);
             return ret;
         }
         catch (NullPointerException e)
@@ -187,7 +188,7 @@ public class Server
             messageCache = message;
             return message;
         }
-
+        // System.out.println(message);
         if (len == this.requiredReceiveDataSize)
         {
             return message;

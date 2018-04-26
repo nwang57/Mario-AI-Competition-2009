@@ -175,6 +175,9 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
     {
         String data = server.recvSafe();
         boolean[] ret = new boolean[Environment.numberOfKeys];
+        // while (data == null) {
+        //     data = server.recvSafe();
+        // }
         if (data == null || data.startsWith("reset"))
             return ret;
 //        String s = "[";

@@ -20,7 +20,7 @@ class LearningAgent(MarioAgent):
         self.config = Config()
         self.obs = None
         self.action_dim = dim_action
-        self.model = Model(dim_action, dim_obs, self.config, model_name, demo_mode=False)
+        self.model = Model(dim_obs,dim_action, self.config, model_name, demo_mode=False)
         self.eps = self.config.INITIAL_EPS
         self.burn_in_size = self.config.BURN_IN_SIZE
         self.inv_gamma = 1.0 / self.config.GAMMA
@@ -36,7 +36,8 @@ class LearningAgent(MarioAgent):
 
 
     def integrateObservation(self, obs):
-        pass
+        self.obs = np.array(obs)
+        print(self.obs)
 
     def getAction(self):
         if self.burn_in_cur_size < self.burn_in_size:
@@ -49,6 +50,8 @@ class LearningAgent(MarioAgent):
         self.perceive(cur_obs, reward, action, next_obs)
         if self.burn_in_cur_size < self.burn_in_size:
             self.burn_in_cur_size += 1
+            if self.burn_in_cur_size % 1000 == 0:
+                print(self.burn_in_cur_size)
             return
         self.model.train(self.step, pretrain=pretrain)
         #self.model.update_target(self.step)
@@ -73,7 +76,7 @@ class LearningAgent(MarioAgent):
         """
             Append the transition to the replay buffer
         """
-        self.model.perceive([cur_obs, reward, action, next_obs])
+        self.model.perceive([cur_obs, reward, action, next_obs, False])
         
         
     def cal_discount_reward(self, reward_queue):

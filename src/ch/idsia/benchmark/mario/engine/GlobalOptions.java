@@ -46,7 +46,7 @@ public static Integer FPS = 24;
 public static int MaxFPS = 100;
 public static boolean areFrozenCreatures = false;
 
-public static boolean isVisualization = true;
+public static boolean isVisualization = false;
 public static boolean isGameplayStopped = false;
 public static boolean isFly = false;
 
