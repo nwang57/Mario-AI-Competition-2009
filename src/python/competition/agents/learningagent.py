@@ -5,7 +5,6 @@ import pdb
 import pygame
 import numpy as np
 import argparse
-import gym
 from collections import deque
 from config import Config
 from model import Model

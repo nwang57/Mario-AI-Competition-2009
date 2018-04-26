@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import tensorflow as tf
 import numpy as np
-import gym, h5py, sys, copy, argparse
+import h5py, sys, copy, argparse
 from numpy import random
 import math
 import json
