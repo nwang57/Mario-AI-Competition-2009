@@ -69,6 +69,7 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
         action = new boolean[Environment.numberOfKeys];
         if (server == null)
             this.createServer(port);
+        currState = new MarioState();
     }
 
     private void sendRawObservation(Environment observation)
@@ -116,6 +117,7 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
             String stateData = "X " + String.valueOf(bitData);
             float reward = this.currState.calculateReward();
             stateData += " " + Math.round(reward);
+            System.out.println("reward is " + reward);
             // System.out.println(stateData);
             server.sendSafe(stateData);
         // }

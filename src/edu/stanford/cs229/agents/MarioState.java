@@ -73,7 +73,7 @@ public class MarioState {
   private int dDistance = 0;
   private int dElevation = 0;
   private int lastElevation = 0;
-  private int lastDistance = 0;
+  private int lastDistance = -1;
   
   public MarioState() {
     for (int i = 0; i < LearningParams.NUM_OBSERVATION_LEVELS; i++) {
@@ -92,11 +92,18 @@ public class MarioState {
     
     // Update distance and elevation.
     int distance = environment.getEvaluationInfo().distancePassedPhys;
-    dDistance = distance - lastDistance;
-    if (Math.abs(dDistance) <= LearningParams.MIN_MOVE_DISTANCE) {
+    if (lastDistance < 0) {
+      lastDistance = distance;
       dDistance = 0;
+    } else {
+      dDistance = distance - lastDistance;
+      if (Math.abs(dDistance) <= LearningParams.MIN_MOVE_DISTANCE) {
+        dDistance = 0;
+      }
+      lastDistance = distance;
     }
-    lastDistance = distance;
+
+    System.out.println("update ddis " + dDistance);
     
     int elevation = Math.max(0,
         getDistanceToGround(MARIO_X - 1) - getDistanceToGround(MARIO_X));
@@ -211,7 +218,10 @@ public class MarioState {
         break;
       }
     }
-    
+    System.out.println(stuck.value + " " + rewardScaler + " ");
+    System.out.println(dDistance + " " + dElevation +  " " + collisionsWithCreatures.value);
+    System.out.println(enemiesKilledByFire.value + " " + enemiesKilledByStomp.value);
+
     float reward = 
         // Penalty to help Mario get out of stuck.
         stuck.value * LearningParams.REWARD_PARAMS.stuck +
