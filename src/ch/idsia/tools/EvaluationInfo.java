@@ -79,6 +79,8 @@ public long bytecodeInstructions = MagicNumberUnDef;
 
 public int levelLength = MagicNumberUnDef;
 
+public int level_exit = MagicNumberUnDef;
+
 public int collisionsWithCreatures = MagicNumberUnDef;
 
 private static final int[] retFloatArray = new int[EvaluationInfo.numberOfElements];

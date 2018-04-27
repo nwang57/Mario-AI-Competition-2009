@@ -625,6 +625,8 @@ private void computeEvaluationInfo()
     evaluationInfo.collisionsWithCreatures = Mario.collisionsWithCreatures;
     evaluationInfo.Memo = levelScene.memo;
     evaluationInfo.levelLength = levelScene.level.length;
+    evaluationInfo.level_exit = levelScene.level.xExit;
+
     evaluationInfo.marioTraceFileName = marioTraceFile;
     evaluationInfo.marioTrace = levelScene.level.marioTrace;
     evaluationInfo.greenMushroomsDevoured = Mario.greenMushroomsDevoured;

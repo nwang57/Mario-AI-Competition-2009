@@ -103,13 +103,14 @@ public class LearningParams {
   public static final class REWARD_PARAMS {
     public static final int distance = 5;
     public static final int elevation = 8;
-    public static final int collision = -800;
-    public static final int killedByFire = 60;
-    public static final int killedByStomp = 60;
+    public static final int collision = -300;
+    public static final int killedByFire = 20;
+    public static final int killedByStomp = 20;
     public static final int stuck = -20;
+    public static final int win = 200;
     
     // Params below are not used.
-    public static final int win = 0;
+    // public static final int win = 0;
     public static final int mode = 0;
     public static final int coins = 0;
     public static final int flowerFire = 0;

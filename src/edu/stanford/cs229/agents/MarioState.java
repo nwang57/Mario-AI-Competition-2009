@@ -6,6 +6,7 @@ import java.util.List;
 import ch.idsia.benchmark.mario.engine.GeneralizerLevelScene;
 import ch.idsia.benchmark.mario.engine.sprites.Sprite;
 import ch.idsia.benchmark.mario.environments.Environment;
+import ch.idsia.tools.EvaluationInfo;
 
 /**
  * Abstract representation of the game environment.
@@ -71,9 +72,13 @@ public class MarioState {
   private byte[][] scene;
 
   private int dDistance = 0;
+  private int distanceLeft = -1;
   private int dElevation = 0;
   private int lastElevation = 0;
   private int lastDistance = -1;
+  private int x_cell_exit = -1;
+  private int m_cell_pass = -1;
+  private boolean win = false;
   
   public MarioState() {
     for (int i = 0; i < LearningParams.NUM_OBSERVATION_LEVELS; i++) {
@@ -89,7 +94,9 @@ public class MarioState {
 
     this.environment = environment;
     this.scene = environment.getMergedObservationZZ(1, 1);
-    
+    x_cell_exit = environment.getEvaluationInfo().level_exit;
+    m_cell_pass = environment.getEvaluationInfo().distancePassedCells;
+
     // Update distance and elevation.
     int distance = environment.getEvaluationInfo().distancePassedPhys;
     if (lastDistance < 0) {
@@ -102,8 +109,11 @@ public class MarioState {
       }
       lastDistance = distance;
     }
-
-    System.out.println("update ddis " + dDistance);
+    if (distanceLeft < 0) {
+      distanceLeft = environment.getEvaluationInfo().levelLength;
+    } else {
+      distanceLeft -= dDistance;
+    }
     
     int elevation = Math.max(0,
         getDistanceToGround(MARIO_X - 1) - getDistanceToGround(MARIO_X));
@@ -207,7 +217,7 @@ public class MarioState {
     
     this.computeStateNumber();
     
-    Logger.println(2, this);
+    // Logger.println(2, this);
   }
   
   public float calculateReward() {
@@ -218,9 +228,8 @@ public class MarioState {
         break;
       }
     }
-    System.out.println(stuck.value + " " + rewardScaler + " ");
-    System.out.println(dDistance + " " + dElevation +  " " + collisionsWithCreatures.value);
-    System.out.println(enemiesKilledByFire.value + " " + enemiesKilledByStomp.value);
+    // System.out.println(dDistance + " " + dElevation +  " " + collisionsWithCreatures.value);
+    // System.out.println(enemiesKilledByFire.value + " " + enemiesKilledByStomp.value);
 
     float reward = 
         // Penalty to help Mario get out of stuck.
@@ -231,13 +240,24 @@ public class MarioState {
         // Reward for killing/avoiding enemies.
         collisionsWithCreatures.value * LearningParams.REWARD_PARAMS.collision +
         enemiesKilledByFire.value * LearningParams.REWARD_PARAMS.killedByFire +
-        enemiesKilledByStomp.value * LearningParams.REWARD_PARAMS.killedByStomp;
+        enemiesKilledByStomp.value * LearningParams.REWARD_PARAMS.killedByStomp +
+        isWin() * LearningParams.REWARD_PARAMS.win;
     
-    Logger.println(2, "D: " + dDistance);
-    Logger.println(2, "H:" + dElevation);
-    Logger.println(2, "Reward = " + reward);
-    
+    // Logger.println(2, "D: " + dDistance);
+    // Logger.println(2, "H:" + dElevation);
+    // Logger.println(2, "Reward = " + reward);
+    // System.out.println(" Distance left: " + distanceLeft + " reward: " + reward);
     return reward;
+  }
+
+  public int isWin() {
+    if (m_cell_pass >= x_cell_exit) {
+      if (!win) {
+        win = true;
+        return 1;
+      }
+    }
+    return 0;
   }
   
   public boolean canJump() {

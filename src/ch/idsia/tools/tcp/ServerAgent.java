@@ -117,7 +117,7 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
             String stateData = "X " + String.valueOf(bitData);
             float reward = this.currState.calculateReward();
             stateData += " " + Math.round(reward);
-            System.out.println("reward is " + reward);
+            // System.out.println("reward is " + reward);
             // System.out.println(stateData);
             server.sendSafe(stateData);
         // }
