@@ -1,6 +1,7 @@
 classes
 *.DS_Store
 *.svn
+*.pyc
 .classpath
 .project
 .pydevproject

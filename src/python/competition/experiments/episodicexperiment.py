@@ -90,7 +90,7 @@ class EpisodicExperiment(Experiment):
                 self.task.performAction(self.action)
 
 ######################################################## START IN CONSTRUCTION #####
-    def to_onehot(val, dim):
+    def to_onehot(self, val, dim):
         return keras.utils.to_categorical(val, num_classes=dim)
  
     def generate_episode_PG(self, dim_obs, dim_action):
@@ -103,8 +103,6 @@ class EpisodicExperiment(Experiment):
         actions = []
         rewards = []
 
-        done = False
-        stepid = 0
         self.reset()
         raw_obs= self.task.getObservation()
         assert(len(raw_obs) == 2)
@@ -112,10 +110,10 @@ class EpisodicExperiment(Experiment):
 
         while True:
             states.append(state)
+            self.agent.integrateObservation(state)
             action = self.agent.getAction()
             actions.append(action)
             self.task.performAction(action)
-            stepid += 1
             raw_obs= self.task.getObservation()
             if len(raw_obs) == 2:
                 next_state, reward = raw_obs
@@ -133,9 +131,10 @@ class EpisodicExperiment(Experiment):
         # Trains the model on a single episode using A2C.
         n_ep = 0
         while n_ep < num_episodes:
-            states, actions, rewards, stepid = self.generate_episode_PG(dim_obs, dim_action)
-            self.agent.update_network(states, actions, rewards)
-            print("#{} Episode len {}, total rewards: {}, avg_reward: {}".format(n_ep ,stepid, np.sum(rewards), np.mean(rewards)))
+            states, actions, rewards= self.generate_episode_PG(dim_obs, dim_action)
+            print("#{} Episode len {}, total rewards: {}, avg_reward: {}".format(n_ep ,len(rewards), np.sum(rewards), np.mean(rewards)))
+            self.agent.update_network(n_ep, states, actions, rewards)
+            n_ep += 1
 ########################################################## END IN CONSTRUCTION #####
 
     def eval(self, num_episodes=20):

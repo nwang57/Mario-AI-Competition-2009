@@ -8,10 +8,6 @@ from keras.layers import Input, Dense, Lambda, Conv2D, Flatten
 from keras.models import load_model
 from keras import optimizers
 
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-
 from reinforce import Reinforce
 
 import functools
@@ -32,9 +28,11 @@ class A2C(Reinforce):
     # This class inherits the Reinforce class, so for example, you can reuse
     # generate_episode() here.
 
-    def __init__(self, model, lr, critic_lr, n=20,
+    def __init__(self, model_path, lr, critic_lr, n=20,
         output_file="model", weight_file=None, critic_weight_file=None):
-        super().__init__(model, lr, output_file, weight_file)
+        with open(model_path, 'r') as f:
+            model = keras.models.model_from_json(f.read())
+        super(A2C, self).__init__(model, lr, output_file, weight_file)
 
         # Initializes A2C.
         # Args:
@@ -78,7 +76,7 @@ class A2C(Reinforce):
         model.compile(optimizer=opt, loss='mean_squared_error')
         return model
 
-    def train(self, states, actions, rewards, gamma=0.99):
+    def train(self, n_ep, states, actions, rewards, gamma=0.99):
         # Trains the model on a single episode using A2C.
         gamma_n = gamma ** self.n
 
@@ -99,4 +97,3 @@ class A2C(Reinforce):
         if n_ep % self.actor_update_freq == 0:
             _, o, loss = self.sess.run([self.opt, self.output, self.loss1], feed_dict = {self.A: actions, self.input: states, self.G: np.transpose(G)})
         self.critic_model.fit(states, R.T, verbose = 0)
-        n_ep += 1

@@ -9,6 +9,7 @@ from agents.forwardagent import ForwardAgent
 from agents.humanAgent import HumanAgent
 from agents.learningagent import LearningAgent
 from agents.forwardrandomagent import ForwardRandomAgent
+from agents.policyGrad.pgAgent import PGAgent
 import pygame
 import argparse
 
@@ -21,6 +22,7 @@ import argparse
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Deep Q Network Argument Parser')
     parser.add_argument('--agent',dest='agent',type=str,default='human')
+    parser.add_argument('--pg_model',dest='pg_model',type=str)
     parser.add_argument('--model',dest='model',type=str)
     parser.add_argument('--n',dest='num_epi',type=int,default='100')
     parser.add_argument('--output', dest='output_file',type=str)
@@ -47,15 +49,13 @@ def main():
         exp = EpisodicExperiment(task, agent)
         exp.train(args.num_epi)
     elif agent_name == 'pg':
-    	dim_obs = 39
+        dim_obs = 39
     	dim_action = len(task.ACTION_MAPPING)
-        model_config_path = 'agents/policyGrad/mario_config.json'
-        with open(model_config_path, 'r') as f:
-            model_config = keras.models.model_from_json(f.read())
+        model_config_path = args.pg_model
         lr = 0.0005
         critic_lr = 0.0005
         n = 50
-        agent = PGAgent(dim_obs, dim_action, model_config, lr, critic_lr, n)
+        agent = PGAgent(dim_obs, dim_action, model_config_path, lr, critic_lr, n)
         exp = EpisodicExperiment(task, agent)
         exp.train_PG(dim_obs, dim_action)
     
