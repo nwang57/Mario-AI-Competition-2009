@@ -49,11 +49,7 @@ class LearningAgent(MarioAgent):
 
     def update_network(self, cur_obs, action, reward, next_obs, pretrain=False):
         # deal with episode end
-        if reward is None:
-            done = True
-            reward = 0
-        else:
-            done = False
+        done = reward is None
         self.perceive(cur_obs, action, reward, next_obs, done)
         if self.burn_in_cur_size < self.burn_in_size:
             self.burn_in_cur_size += 1
