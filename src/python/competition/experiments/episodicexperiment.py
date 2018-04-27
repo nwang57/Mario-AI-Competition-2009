@@ -3,6 +3,7 @@ __date__ = "$May 12, 2009 11:18:19 PM$"
 
 from experiment import Experiment
 import numpy as np
+import keras
 
 
 #class EpisodicExperiment(Experiment):
@@ -124,13 +125,15 @@ class EpisodicExperiment(Experiment):
             state = np.reshape(next_state, (1,dim_obs))
 
         actions = self.to_onehot(actions, dim_action)
-        return np.concatenate(states), actions, np.array(rewards)
+        assert(len(states) == len(actions))
+        assert(len(states) == len(rewards) + 1)
+        return np.concatenate(states[:-1]), actions[:-1], np.array(rewards)
 
     def train_PG(self, dim_obs, dim_action, num_episodes=100):
         # Trains the model on a single episode using A2C.
         n_ep = 0
         while n_ep < num_episodes:
-            states, actions, rewards, stepid = self.generate_episode(dim_obs, dim_action)
+            states, actions, rewards, stepid = self.generate_episode_PG(dim_obs, dim_action)
             self.agent.update_network(states, actions, rewards)
             print("#{} Episode len {}, total rewards: {}, avg_reward: {}".format(n_ep ,stepid, np.sum(rewards), np.mean(rewards)))
 ########################################################## END IN CONSTRUCTION #####

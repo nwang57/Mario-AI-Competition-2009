@@ -46,6 +46,18 @@ def main():
         agent = LearningAgent(dim_obs, dim_action, model)
         exp = EpisodicExperiment(task, agent)
         exp.train(args.num_epi)
+    elif agent_name == 'pg':
+    	dim_obs = 39
+    	dim_action = len(task.ACTION_MAPPING)
+        model_config_path = 'agents/policyGrad/mario_config.json'
+        with open(model_config_path, 'r') as f:
+            model_config = keras.models.model_from_json(f.read())
+        lr = 0.0005
+        critic_lr = 0.0005
+        n = 50
+        agent = PGAgent(dim_obs, dim_action, model_config, lr, critic_lr, n)
+        exp = EpisodicExperiment(task, agent)
+        exp.train_PG(dim_obs, dim_action)
     
     print "finished"
 
