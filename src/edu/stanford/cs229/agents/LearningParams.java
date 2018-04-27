@@ -101,7 +101,7 @@ public class LearningParams {
   public static final float[] ENEMIES_AROUND_REWARD_SCALER = {0f, 0f, 0.15f};
   
   public static final class REWARD_PARAMS {
-    public static final int distance = 2;
+    public static final int distance = 5;
     public static final int elevation = 8;
     public static final int collision = -800;
     public static final int killedByFire = 60;

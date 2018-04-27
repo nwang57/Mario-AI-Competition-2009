@@ -38,8 +38,6 @@ class Model():
         self.num_input = num_input
         self.num_output = num_output
         self.config = config
-        print("num_input %d" % self.num_input)
-        print("num_output %d" % self.num_output)
 
         self.model_name = model_name
         self.demo_mode = demo_mode
@@ -182,7 +180,7 @@ class Model():
             self.train_no_demo()
 
         if self.model_name == 'ddqn':
-            update_target(self, n_iter)
+            self.update_target(n_iter)
 
         # writer = tf.summary.FileWriter('./log', self.sess.graph)
         # writer.close()
@@ -190,7 +188,6 @@ class Model():
 
     def train_no_demo(self):
         batch_ = self.sample_batch(self.config.BATCH_SIZE)
-        print(len(batch_))
         s_t0, a_t0, r_t1, s_t1, d_t0, idxs, _ = batch_
         old_q_values = self.sess.run(self.model[0], feed_dict={self.input: s_t0})
         new_q_values = self.sess.run(self.model[0], feed_dict={self.input: s_t1})

@@ -2,6 +2,7 @@ __author__ = "Sergey Karakovskiy, sergey at idsia fullstop ch"
 __date__ = "$May 12, 2009 11:18:19 PM$"
 
 from experiment import Experiment
+import numpy as np
 
 
 #class EpisodicExperiment(Experiment):
@@ -62,16 +63,51 @@ class EpisodicExperiment(Experiment):
     def train(self, num_episodes = 100):
         for i in xrange(num_episodes):
             self.reset()
+            reward_list = []
+            while True:
+                self.stepid += 1
+                raw_obs= self.task.getObservation()
+                if len(raw_obs) == 2:
+                    next_state, reward = raw_obs
+                    if self.cur_state is not None:
+                        self.agent.update_network(self.cur_state, self.action, reward, next_state, pretrain=False)
+                    
+                    
+                    
+                    
+                    
+                    
+                    if reward is None:
+                        # epsisode finish
+                        print("#{} Episode len {}, total rewards: {}, avg_reward: {}, eps: {}".format(i ,self.stepid, np.sum(reward_list), np.mean(reward_list), self.agent.eps))
+                        reward_list = []
+                        break
+                    else:
+                        reward_list.append(reward)
+                else:
+                    raise KeyError("obs len wrong")
+                # perform update with cur, action, next, reward
+                # if self.cur_state is not None:
+                #     pass
+                self.cur_state = next_state
+                self.agent.integrateObservation(self.cur_state)
+                self.action = self.agent.getAction()
+                self.task.performAction(self.action)
+
+    def eval(self, num_episodes=20):
+        for i in xrange(num_episodes):
+            self.reset()
             while True:
                 self.stepid += 1
                 raw_obs= self.task.getObservation()
                 if len(raw_obs) == 2:
                     next_state, reward = raw_obs
                     if reward is None:
-                        # episode finish
+                        # epsisode finish
                         break
                     if self.cur_state is not None:
                         self.agent.update_network(self.cur_state, self.action, reward, next_state, pretrain=False)
+
                 else:
                     raise KeyError("obs len wrong")
                 # perform update with cur, action, next, reward

@@ -59,7 +59,6 @@ class MarioTask(EpisodicTask):
     def performAction(self, action):
         if not self.isFinished():
             if type(action) is list:
-                print("in mariotask ", action, type(action))
                 EpisodicTask.performAction(self, action)
             else:
                 EpisodicTask.performAction(self, self.ACTION_MAPPING[action])        

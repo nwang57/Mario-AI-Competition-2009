@@ -27,17 +27,18 @@ class LearningAgent(MarioAgent):
         self.n_pow_gamma = self.config.GAMMA ** self.config.N_STEP
         self.step = 0
         self.burn_in_cur_size = 0
+        self.last_obs = None
     
         """Constructor"""
 
     def reset(self):
         self.isEpisodeOver = 0
         self.obs = None
+        self.last_obs = None
 
 
     def integrateObservation(self, obs):
         self.obs = np.array(obs)
-        print(self.obs)
 
     def getAction(self):
         if self.burn_in_cur_size < self.burn_in_size:
@@ -47,7 +48,13 @@ class LearningAgent(MarioAgent):
         return action
 
     def update_network(self, cur_obs, action, reward, next_obs, pretrain=False):
-        self.perceive(cur_obs, action, reward, next_obs)
+        # deal with episode end
+        if reward is None:
+            done = True
+            reward = 0
+        else:
+            done = False
+        self.perceive(cur_obs, action, reward, next_obs, done)
         if self.burn_in_cur_size < self.burn_in_size:
             self.burn_in_cur_size += 1
             if self.burn_in_cur_size % 1000 == 0:
@@ -68,16 +75,24 @@ class LearningAgent(MarioAgent):
         return action
 
     def update_eps(self):
-        delta = (self.config.INITIAL_EPS - self.config.FINAL_EPS) / 500000
+        delta = (self.config.INITIAL_EPS - self.config.FINAL_EPS) / 100000
         if self.eps > self.config.FINAL_EPS:
             self.eps -= delta
 
-    def perceive(self, cur_obs, action, reward, next_obs):
+    def perceive(self, cur_obs, action, reward, next_obs, done):
         """
             Append the transition to the replay buffer
         """
         #s_t0, a_t0, r_t1, s_t1, d_t0
-        self.model.perceive([cur_obs, action, reward, next_obs, False])
+        if self.last_obs is not None:
+            if reward is None:
+                self.last_obs[4] = True
+                self.model.perceive(self.last_obs)
+            else:
+                self.model.perceive(self.last_obs)
+                self.last_obs = [cur_obs, action, reward, next_obs, done]
+        else:
+            self.last_obs = [cur_obs, action, reward, next_obs, done]
         
         
     def cal_discount_reward(self, reward_queue):

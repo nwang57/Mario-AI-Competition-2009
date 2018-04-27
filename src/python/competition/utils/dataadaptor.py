@@ -47,20 +47,19 @@ def decode(estate):
             if (totalBitsDecoded == 484):
                 break
     print "totalBitsDecoded = ", totalBitsDecoded
-    return dstate, check_sum;
+    return dstate, check_sum
 
 
 def extractObservation(data):
     """
      parse the array of strings and return array 22 by 22 of doubles
     """
-    print(data)
     obsLength = 364
     levelScene = numpy.empty(shape = (19, 19), dtype = numpy.int)
     enemiesFloats = []
     dummy = 0
     if (data == "FIN"):
-        return [0] * 5
+        return ([0] * 5, None)
     elif(data[0] == 'E'): #Encoded observation, fastTCP mode, have to be decoded
 #        assert len(data) == eobsLength
         mayMarioJump = (data[1] == '1')

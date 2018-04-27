@@ -49,3 +49,6 @@ Human can use wasd and j, k to control mario
 ## Episode control
 
 `Main.java` will create a new basic task and provides the level and number of repeat for one episode
+
+`-tl 100` set time limit to 100
+`-vis off` turn off visualization

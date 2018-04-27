@@ -33,7 +33,7 @@ public class Server
     private List<Integer> trustedLengths = null; // TODO:SK trustedLengths
 
     private BufferedReader in = null;
-    PrintWriter out = null;
+    DataOutputStream out = null;
     ServerSocket serverSocket = null;
     private Socket socket = null;
 
@@ -56,7 +56,7 @@ public class Server
             socket = serverSocket.accept ();
             System.out.println ("Server: We have a connection from " + socket.getInetAddress ());
 
-            out = new PrintWriter( new OutputStreamWriter(socket.getOutputStream(), "UTF-8") );
+            out = new DataOutputStream(socket.getOutputStream());
 
 //            out = new PrintWriter(socket.getOutputStream (), "UTF-8");
             this.send("Server: Hi! Welcome.");
@@ -99,12 +99,15 @@ public class Server
 
     private void send(String message)
     {
-       System.out.println("Server.send() >> Sedning message: " + message);
-        out.print(message);
+    //    System.out.println("Server.send() >> Sedning message: " + message);
+    try {
+        out.writeInt(message.length());
+        out.write(message.getBytes(), 0, message.length());
+        out.flush();
+
 //        System.out.println("Server: " + message.length() + " bytes of data had been sent");
-        if (out.checkError())
-        {
-            System.err.println("Server.send() : Error detected while sending");
+    } catch (Exception e) {
+            System.err.println("Server.send() : Error " + e);
             restartServer();
         }
     }
@@ -150,7 +153,7 @@ public class Server
             {
                 throw new NullPointerException();
             }
-            System.out.println("Server.recv() >> " + ret);
+            // System.out.println("Server.recv() >> " + ret);
             return ret;
         }
         catch (NullPointerException e)

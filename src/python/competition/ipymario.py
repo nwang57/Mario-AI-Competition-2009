@@ -22,6 +22,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description='Deep Q Network Argument Parser')
     parser.add_argument('--agent',dest='agent',type=str,default='human')
     parser.add_argument('--model',dest='model',type=str)
+    parser.add_argument('--n',dest='num_epi',type=int,default='100')
     parser.add_argument('--output', dest='output_file',type=str)
     parser.add_argument('--memory', dest='memory_mode',type=int)
     return parser.parse_args()
@@ -44,7 +45,7 @@ def main():
     	dim_action = len(task.ACTION_MAPPING)
         agent = LearningAgent(dim_obs, dim_action, model)
         exp = EpisodicExperiment(task, agent)
-        exp.train(5)
+        exp.train(args.num_epi)
     
     print "finished"
 

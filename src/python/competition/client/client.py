@@ -1,5 +1,6 @@
 import sys
 import socket
+import struct
 __author__ = "Sergey Karakovskiy, sergey at idsia fullstop ch"
 __date__ = "$May 1, 2009 9:02:32 AM$"
 
@@ -71,7 +72,7 @@ class Client:
     def recvData(self):
         """receive arbitrary data from server"""
         try:
-            return self.sock.recv(self.bufSize)
+            return self.recv_msg()
         except  socket.error, msg:
             sys.stderr.write("[SOCKET PIPE ERROR WHILE RECEIVING] %s\n.Possible reason: socket closed due to time out and/or requested server is currently busy" % msg[1])
             raise
@@ -85,3 +86,21 @@ class Client:
             sys.stderr.write("[SOCKET PIPE ERROR WHILE SENDING] %s\n" % msg[1])
             raise
 
+    def recv_msg(self):
+        # Read message length and unpack it into an integer
+        raw_msglen = self.recvall(4)
+        if not raw_msglen:
+            return None
+        msglen = struct.unpack('>I', raw_msglen)[0]
+        # Read the message data
+        return self.recvall(msglen)
+
+    def recvall(self, n):
+        # Helper function to recv n bytes or return None if EOF is hit
+        data = b''
+        while len(data) < n:
+            packet = self.sock.recv(n - len(data))
+            if not packet:
+                return None
+            data += packet
+        return data
