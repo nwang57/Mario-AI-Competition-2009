@@ -71,12 +71,6 @@ class EpisodicExperiment(Experiment):
                     next_state, reward = raw_obs
                     if self.cur_state is not None:
                         self.agent.update_network(self.cur_state, self.action, reward, next_state, pretrain=False)
-                    
-                    
-                    
-                    
-                    
-                    
                     if reward is None:
                         # epsisode finish
                         print("#{} Episode len {}, total rewards: {}, avg_reward: {}, eps: {}".format(i ,self.stepid, np.sum(reward_list), np.mean(reward_list), self.agent.eps))
@@ -93,6 +87,53 @@ class EpisodicExperiment(Experiment):
                 self.agent.integrateObservation(self.cur_state)
                 self.action = self.agent.getAction()
                 self.task.performAction(self.action)
+
+######################################################## START IN CONSTRUCTION #####
+    def to_onehot(val, dim):
+        return keras.utils.to_categorical(val, num_classes=dim)
+ 
+    def generate_episode_PG(self, dim_obs, dim_action):
+        # Generates an episode by executing the current policy in the given env.
+        # Returns:
+        # - a list of states, indexed by time step
+        # - a list of actions, indexed by time step
+        # - a list of rewards, indexed by time step
+        states = []
+        actions = []
+        rewards = []
+
+        done = False
+        stepid = 0
+        self.reset()
+        raw_obs= self.task.getObservation()
+        assert(len(raw_obs) == 2)
+        state = np.reshape(raw_obs[0],(1,dim_obs))
+
+        while True:
+            states.append(state)
+            action = self.agent.getAction()
+            actions.append(action)
+            self.task.performAction(action)
+            stepid += 1
+            raw_obs= self.task.getObservation()
+            if len(raw_obs) == 2:
+                next_state, reward = raw_obs
+                if reward is None:
+                    break
+            rewards.append(reward)
+            state = np.reshape(next_state, (1,dim_obs))
+
+        actions = self.to_onehot(actions, dim_action)
+        return np.concatenate(states), actions, np.array(rewards)
+
+    def train_PG(self, dim_obs, dim_action, num_episodes=100):
+        # Trains the model on a single episode using A2C.
+        n_ep = 0
+        while n_ep < num_episodes:
+            states, actions, rewards, stepid = self.generate_episode(dim_obs, dim_action)
+            self.agent.update_network(states, actions, rewards)
+            print("#{} Episode len {}, total rewards: {}, avg_reward: {}".format(n_ep ,stepid, np.sum(rewards), np.mean(rewards)))
+########################################################## END IN CONSTRUCTION #####
 
     def eval(self, num_episodes=20):
         for i in xrange(num_episodes):
