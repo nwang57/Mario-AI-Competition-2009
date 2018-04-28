@@ -87,27 +87,39 @@ public class LearningParams {
   /**
    * Number of observation levels (window sizes).
    */
-  public static final int NUM_OBSERVATION_LEVELS = 3;
+  public static final int NUM_OBSERVATION_LEVELS = 4;
   
   /**
    * Window size of each observation level.
    */
-  public static final int[] OBSERVATION_SIZES = {1, 3, 5};
+  public static final int[] OBSERVATION_SIZES = {1, 3, 5, 7};
   
   /**
    * Scalers to apply to distance/elevation rewards when enemies are present
    * in the corresponding observation level.
    */
-  public static final float[] ENEMIES_AROUND_REWARD_SCALER = {0f, 0f, 0.15f};
+  public static final float[] ENEMIES_AROUND_REWARD_SCALER = {0f, 0f, 1f, 1f};
   
   public static final class REWARD_PARAMS {
-    public static final int distance = 10;
-    public static final int elevation = 8;
-    public static final int collision = -500;
-    public static final int killedByFire = 20;
+    public static final int distance = 3;
+    public static final int elevation = 2;
+    public static final int collision = -1000;
+    public static final int killedByFire = 10;
     public static final int killedByStomp = 20;
-    public static final int stuck = -20;
-    public static final int win = 500;
+    public static final int stuck = -2;
+    // public static final int win = 2000;
+    public static final int[] milestone = {
+      200,
+      200,
+      200,
+      200,
+      200,
+      210,
+      220,
+      230,
+      240,
+      1000
+    };
     
     // Params below are not used.
     // public static final int win = 0;

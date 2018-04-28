@@ -9,7 +9,7 @@ class PGAgent(MarioAgent):
 
     def __init__(self, dim_obs, dim_action, model_config_path, lr, critic_lr, n):
         self.n = n
-        self.model = A2C(model_config_path, lr, critic_lr, n)
+        self.model = A2C(dim_obs, dim_action, model_config_path, lr, critic_lr, n)
     
         """Constructor"""
 

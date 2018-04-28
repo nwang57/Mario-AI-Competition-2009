@@ -162,9 +162,9 @@ public boolean isFinished()
 public void reset()
 {
     agent = options.getAgent();
-    Random ran = new Random();
-    int randMarioMode = ran.nextInt(3);
-    options.setMarioMode(randMarioMode);
+    // Random ran = new Random();
+    // int randMarioMode = ran.nextInt(3);
+    options.setMarioMode(0);
     environment.reset(options);
     agent.reset();
     agent.setObservationDetails(environment.getReceptiveFieldWidth(),

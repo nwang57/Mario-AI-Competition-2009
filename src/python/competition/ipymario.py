@@ -42,20 +42,19 @@ def main():
         exp = EpisodicExperiment(task, agent)
         exp.run(5)
     elif agent_name == 'learning':
-        print "hello"
-    	dim_obs = 39
+    	dim_obs = 47
     	dim_action = len(task.ACTION_MAPPING)
         agent = LearningAgent(dim_obs, dim_action, model)
         exp = EpisodicExperiment(task, agent)
         exp.train(args.num_epi)
     elif agent_name == 'pg':
-        dim_obs = 39
+        dim_obs = 47
     	dim_action = len(task.ACTION_MAPPING)
         model_config_path = args.pg_model
         lr = 0.001
         critic_lr = 0.001
-        n = 50
-        gamma = 0.6
+        n = 100
+        gamma = 0.9
         agent = PGAgent(dim_obs, dim_action, model_config_path, lr, critic_lr, n)
         exp = EpisodicExperiment(task, agent)
         exp.train_PG(dim_obs, dim_action, args.num_epi, gamma)

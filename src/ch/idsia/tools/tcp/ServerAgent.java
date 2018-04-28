@@ -113,13 +113,15 @@ public class ServerAgent extends BasicMarioAIAgent implements Agent
         // {
             //this.sendRawObservation(observation);
             this.currState.update(observation);
-            long bitData = this.currState.getStateNumber();
-            String stateData = "X " + String.valueOf(bitData);
+
+            // long bitData = this.currState.getStateNumber();
+            String obs = this.currState.get_obs();
+            obs = "X " + obs;
             float reward = this.currState.calculateReward();
-            stateData += " " + Math.round(reward);
+            obs += " " + Math.round(reward);
             // System.out.println("reward is " + reward);
-            // System.out.println(stateData);
-            server.sendSafe(stateData);
+            // System.out.println(obs);
+            server.sendSafe(obs);
         // }
         // else if (this.tcpMode == TCP_MODE.FAST_TCP)
         // {

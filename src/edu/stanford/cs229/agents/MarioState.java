@@ -79,6 +79,7 @@ public class MarioState {
   private int x_cell_exit = -1;
   private int m_cell_pass = -1;
   private boolean win = false;
+  private int[] milestone_achieved = new int[LearningParams.REWARD_PARAMS.milestone.length];
   
   public MarioState() {
     for (int i = 0; i < LearningParams.NUM_OBSERVATION_LEVELS; i++) {
@@ -129,7 +130,7 @@ public class MarioState {
     marioX = pos[0];
     marioY = pos[1];
     
-    if (dDistance == 0) {
+    if (Math.abs(dDistance) <= 1) {
       stuckCount += 1;
     } else {
       stuckCount = 0;
@@ -230,7 +231,11 @@ public class MarioState {
     }
     // System.out.println(dDistance + " " + dElevation +  " " + collisionsWithCreatures.value);
     // System.out.println(enemiesKilledByFire.value + " " + enemiesKilledByStomp.value);
-
+    int milestone = check_milestone();
+    int milestone_reward = 0;
+    if (milestone >= 0) {
+      milestone_reward = LearningParams.REWARD_PARAMS.milestone[milestone];
+    }
     float reward = 
         // Penalty to help Mario get out of stuck.
         stuck.value * LearningParams.REWARD_PARAMS.stuck +
@@ -241,13 +246,27 @@ public class MarioState {
         collisionsWithCreatures.value * LearningParams.REWARD_PARAMS.collision +
         enemiesKilledByFire.value * LearningParams.REWARD_PARAMS.killedByFire +
         enemiesKilledByStomp.value * LearningParams.REWARD_PARAMS.killedByStomp +
-        isWin() * LearningParams.REWARD_PARAMS.win;
+        milestone_reward;
+        // isWin() * LearningParams.REWARD_PARAMS.win;
     
     // Logger.println(2, "D: " + dDistance);
     // Logger.println(2, "H:" + dElevation);
     // Logger.println(2, "Reward = " + reward);
     // System.out.println(" Distance left: " + distanceLeft + " reward: " + reward);
     return reward;
+  }
+
+  public int check_milestone() {
+    int mario_pos = (int)(Math.floor(m_cell_pass * 10 / x_cell_exit));
+    int levels = LearningParams.REWARD_PARAMS.milestone.length;
+    if (mario_pos > 0 && mario_pos <= levels) {
+      int i = mario_pos - 1;
+      if (milestone_achieved[i] == 0) {
+        milestone_achieved[i] = 1;
+        return i;
+      }
+    }
+    return -1;
   }
 
   public int isWin() {
@@ -282,6 +301,12 @@ public class MarioState {
       System.err.println("State number too large!! = " + i + "bits!!");
       System.exit(1);
     }
+  }
+
+  public String get_obs() {
+    // String ret = "";
+    // ret = stateNumber + " " + dDistance;
+    return String.valueOf(stateNumber);
   }
   
   @Override

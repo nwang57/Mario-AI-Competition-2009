@@ -115,10 +115,12 @@ def extractObservation(data):
 
         return (mayMarioJump, isMarioOnGround, marioFloats, enemiesFloats, levelScene, dummy)
     elif(data[0] == 'X'):
+        # X bit dDistance r
         bit_vec = list("{0:b}".format(int(data[1])))
-        max_len = 39
+        max_len = 47
         ret = ['0']*(max_len - len(bit_vec)) + bit_vec
         int_ret = [int(c) for c in ret]
+        # dDistance = int(data[2])
         reward = float(data[2])
         return (int_ret, reward)
     else:

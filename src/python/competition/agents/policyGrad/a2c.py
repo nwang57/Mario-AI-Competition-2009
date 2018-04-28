@@ -28,10 +28,15 @@ class A2C(Reinforce):
     # This class inherits the Reinforce class, so for example, you can reuse
     # generate_episode() here.
 
-    def __init__(self, model_path, lr, critic_lr, n=20,
+    def __init__(self, input_dim, output_dim, model_path, lr, critic_lr, n=20,
         output_file="model", weight_file=None, critic_weight_file=None):
-        with open(model_path, 'r') as f:
-            model = keras.models.model_from_json(f.read())
+        self.input_dim = input_dim
+        self.output_dim = output_dim
+        if model_path:
+            with open(model_path, 'r') as f:
+                model = keras.models.model_from_json(f.read())
+        else:
+            model = self.build_actor(lr)
         super(A2C, self).__init__(model, lr, output_file, weight_file)
 
         # Initializes A2C.
@@ -42,10 +47,8 @@ class A2C(Reinforce):
         # - critic_lr: Learning rate for the critic model.
         # - n: The value of N in N-step A2C.
         self.model.summary()
-        self.input_dim = int(self.input_dim)
-        self.output_dim = 1
+
         self.critic_model = self.build_critic(critic_lr)
-        self.critic_model.summary()
         self.n = n
         self.eval_freq = 200
         self.actor_update_freq = 5
@@ -68,12 +71,20 @@ class A2C(Reinforce):
 
     def build_critic(self, lr):
         model = Sequential()
-        model.add(Dense(32, input_dim=self.input_dim, activation='relu', use_bias=True))
+        model.add(Dense(64, input_dim=int(self.input_dim), activation='relu', use_bias=True))
         model.add(Dense(32, activation='relu', use_bias=True))
         model.add(Dense(32, activation='relu', use_bias=True))
-        model.add(Dense(self.output_dim, activation='linear', kernel_initializer='uniform'))
+        model.add(Dense(1, activation='linear', kernel_initializer='uniform'))
         opt = optimizers.Adam(lr = lr)
         model.compile(optimizer=opt, loss='mean_squared_error')
+        return model
+
+    def build_actor(self, lr):
+        model = Sequential()
+        model.add(Dense(64, input_dim=int(self.input_dim), activation='relu', use_bias=True))
+        model.add(Dense(32, activation='relu', use_bias=True))
+        model.add(Dense(32, activation='relu', use_bias=True))
+        model.add(Dense(self.output_dim, activation='softmax', kernel_initializer='uniform'))
         return model
 
     def train(self, n_ep, states, actions, rewards, gamma=0.99):
