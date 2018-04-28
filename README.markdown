@@ -39,16 +39,27 @@ The key map is as follows:
 
 ## HumanAgent
 
+Use the following command to lanuch human agent client
+
+`python src/python/competition/ipymario.py`
+
 Human can use wasd and j, k to control mario
+
+## Q-learning agent
+
+`python src/python/competition/ipymario.py --agent learning --n [num episodes] --model [dqn|ddqn]`
+
+## A2C agent
+
+`python src/python/competition/ipymario.py --agent pg --n [num episodes] --pg_model [model path]`
 
  ## Global options
 
  The default FPS is 24 so the delay is 41. We can change the delay in `MarioComponent.adjustFPS()`. 
 
 
-## Episode control
-
-`Main.java` will create a new basic task and provides the level and number of repeat for one episode
+## Game options
 
 `-tl 100` set time limit to 100
 `-vis off` turn off visualization
+`-mm [0|1|2]` change mario mode
