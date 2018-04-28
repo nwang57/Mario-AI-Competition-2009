@@ -36,6 +36,7 @@ import ch.idsia.tools.MarioAIOptions;
 import ch.idsia.tools.punj.PunctualJudge;
 import ch.idsia.utils.statistics.StatisticalSummary;
 
+import java.util.Random;
 import java.util.Vector;
 
 /**
@@ -127,6 +128,7 @@ public void doEpisodes(int amount, boolean verbose, final int repetitionsOfSingl
     //     statistics.addElement(new StatisticalSummary());
     // }
     // for (int i = 0; i < amount; ++i)
+    int n_ep = 0;
     while(true)
     {
         this.reset();
@@ -137,6 +139,12 @@ public void doEpisodes(int amount, boolean verbose, final int repetitionsOfSingl
         }
 
         agent.setFinished();
+        n_ep += 1;
+        if (n_ep >= 250 && n_ep % 250 == 0) {
+            this.options.setVisualization(true);
+        } else if (n_ep >= 250 && n_ep % 250 == 2) {
+            this.options.setVisualization(false);
+        }
         // for (int j = 0; j < EvaluationInfo.numberOfElements; j++)
         // {
         //     statistics.get(j).add(environment.getEvaluationInfoAsInts()[j]);
@@ -154,6 +162,9 @@ public boolean isFinished()
 public void reset()
 {
     agent = options.getAgent();
+    Random ran = new Random();
+    int randMarioMode = ran.nextInt(3);
+    options.setMarioMode(randMarioMode);
     environment.reset(options);
     agent.reset();
     agent.setObservationDetails(environment.getReceptiveFieldWidth(),

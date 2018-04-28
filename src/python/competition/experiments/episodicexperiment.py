@@ -127,13 +127,13 @@ class EpisodicExperiment(Experiment):
         assert(len(states) == len(rewards) + 1)
         return np.concatenate(states[:-1]), actions[:-1], np.array(rewards)
 
-    def train_PG(self, dim_obs, dim_action, num_episodes=100):
+    def train_PG(self, dim_obs, dim_action, num_episodes=100, gamma=0.99):
         # Trains the model on a single episode using A2C.
         n_ep = 0
         while n_ep < num_episodes:
             states, actions, rewards= self.generate_episode_PG(dim_obs, dim_action)
             print("#{} Episode len {}, total rewards: {}, avg_reward: {}".format(n_ep ,len(rewards), np.sum(rewards), np.mean(rewards)))
-            self.agent.update_network(n_ep, states, actions, rewards)
+            self.agent.update_network(n_ep, states, actions, rewards, gamma)
             n_ep += 1
 ########################################################## END IN CONSTRUCTION #####
 

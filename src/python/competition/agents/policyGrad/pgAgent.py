@@ -23,5 +23,5 @@ class PGAgent(MarioAgent):
     def getAction(self):
         return A2C.get_action(self.model.model, self.obs)
 
-    def update_network(self, n_ep, states, actions, rewards):
-        self.model.train(n_ep, states, actions, rewards)
+    def update_network(self, n_ep, states, actions, rewards, gamma):
+        self.model.train(n_ep, states, actions, rewards, gamma)

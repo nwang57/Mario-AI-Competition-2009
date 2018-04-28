@@ -34,7 +34,7 @@ def main():
     agent_name = args.agent
     model = args.model
 
-    task = MarioTask(initMarioMode = 2)
+    task = MarioTask(initMarioMode = 0)
 
     print agent_name
     if agent_name == 'human':
@@ -52,12 +52,13 @@ def main():
         dim_obs = 39
     	dim_action = len(task.ACTION_MAPPING)
         model_config_path = args.pg_model
-        lr = 0.0005
-        critic_lr = 0.0005
+        lr = 0.001
+        critic_lr = 0.001
         n = 50
+        gamma = 0.6
         agent = PGAgent(dim_obs, dim_action, model_config_path, lr, critic_lr, n)
         exp = EpisodicExperiment(task, agent)
-        exp.train_PG(dim_obs, dim_action)
+        exp.train_PG(dim_obs, dim_action, args.num_epi, gamma)
     
     print "finished"
 

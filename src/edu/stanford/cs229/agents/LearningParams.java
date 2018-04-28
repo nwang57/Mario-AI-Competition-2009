@@ -101,13 +101,13 @@ public class LearningParams {
   public static final float[] ENEMIES_AROUND_REWARD_SCALER = {0f, 0f, 0.15f};
   
   public static final class REWARD_PARAMS {
-    public static final int distance = 5;
+    public static final int distance = 10;
     public static final int elevation = 8;
-    public static final int collision = -300;
+    public static final int collision = -500;
     public static final int killedByFire = 20;
     public static final int killedByStomp = 20;
     public static final int stuck = -20;
-    public static final int win = 200;
+    public static final int win = 500;
     
     // Params below are not used.
     // public static final int win = 0;
