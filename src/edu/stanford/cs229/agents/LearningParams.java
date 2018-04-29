@@ -101,12 +101,12 @@ public class LearningParams {
   public static final float[] ENEMIES_AROUND_REWARD_SCALER = {0f, 0f, 1f, 1f};
   
   public static final class REWARD_PARAMS {
-    public static final int distance = 3;
-    public static final int elevation = 2;
+    public static final int distance = 10;
+    public static final int elevation = 8;
     public static final int collision = -1000;
-    public static final int killedByFire = 10;
+    public static final int killedByFire = 20;
     public static final int killedByStomp = 20;
-    public static final int stuck = -2;
+    public static final int stuck = -20;
     // public static final int win = 2000;
     public static final int[] milestone = {
       200,

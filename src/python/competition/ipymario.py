@@ -31,7 +31,6 @@ def parse_arguments():
     parser.add_argument('--save_epi', dest='save_epi', type = int, default=1000)
     parser.add_argument('--actor_weights', dest='actor_weights', type=str)
     parser.add_argument('--critic_weights', dest='critic_weights', type=str)
-
     return parser.parse_args()
 
 def main():
@@ -64,7 +63,7 @@ def main():
         critic_lr = 0.001
         n = 100
         gamma = 0.9
-        agent = PGAgent(dim_obs, dim_action, model_config_path, lr, critic_lr, n, actor_file=actor_weights, critic_file=critic_weights)
+        agent = PGAgent(dim_obs, dim_action, model_config_path, lr, critic_lr, n, output_file = fn_prefix, actor_file=actor_weights, critic_file=critic_weights)
         exp = EpisodicExperiment(task, agent)
         exp.train_PG(dim_obs, dim_action, args.num_epi, gamma, save_ep=save_epi)
     
