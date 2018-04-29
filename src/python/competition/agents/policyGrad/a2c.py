@@ -65,6 +65,7 @@ class A2C(Reinforce):
     def save_weights(self, n_ep):
         super(A2C, self).save_weights(n_ep)
         self.critic_model.save_weights("%s_critic_%d.h5" % (self.output_file, n_ep))
+        
 
     def load_critic_weights(self):
         self.model.load_weights(self.critic_weight_file)

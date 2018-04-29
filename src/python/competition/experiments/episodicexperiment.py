@@ -61,7 +61,7 @@ class EpisodicExperiment(Experiment):
         return all_rewards
 
 
-    def train(self, num_episodes = 100):
+    def train(self, num_episodes = 100, save_ep = 1000):
         for i in xrange(num_episodes):
             self.reset()
             reward_list = []
@@ -88,6 +88,8 @@ class EpisodicExperiment(Experiment):
                 self.agent.integrateObservation(self.cur_state)
                 self.action = self.agent.getAction()
                 self.task.performAction(self.action)
+            if (i % save_ep == 0 or i == num_episodes-1):
+                self.agent.save_weights(i)
 
 ######################################################## START IN CONSTRUCTION #####
     def to_onehot(self, val, dim):
@@ -127,13 +129,15 @@ class EpisodicExperiment(Experiment):
         assert(len(states) == len(rewards) + 1)
         return np.concatenate(states[:-1]), actions[:-1], np.array(rewards)
 
-    def train_PG(self, dim_obs, dim_action, num_episodes=100, gamma=0.99):
+    def train_PG(self, dim_obs, dim_action, num_episodes=100, gamma=0.99, save_ep = 1000):
         # Trains the model on a single episode using A2C.
         n_ep = 0
         while n_ep < num_episodes:
-            states, actions, rewards= self.generate_episode_PG(dim_obs, dim_action)
+            states, actions, rewards = self.generate_episode_PG(dim_obs, dim_action)
             print("#{} Episode len {}, total rewards: {}, avg_reward: {}".format(n_ep ,len(rewards), np.sum(rewards), np.mean(rewards)))
             self.agent.update_network(n_ep, states, actions, rewards, gamma)
+            if (n_ep % save_ep == 0 or n_ep == num_episodes-1):
+                self.agent.save_model_weights(n_ep)
             n_ep += 1
 ########################################################## END IN CONSTRUCTION #####
 

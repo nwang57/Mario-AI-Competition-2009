@@ -32,13 +32,13 @@ def lazy_property(func):
 
 class Model():
 
-    def __init__(self, num_input, num_output, config, model_name, demo_mode=False):
+    def __init__(self, num_input, num_output, config, model_name, demo_mode=False, output_file='model'):
 
         self.sess = tf.Session()
         self.num_input = num_input
         self.num_output = num_output
         self.config = config
-
+        self.output_file = output_file
         self.model_name = model_name
         self.demo_mode = demo_mode
         self.select_net_name = 'select_net'
@@ -351,3 +351,9 @@ class Model():
             print()
 
    
+    def save_weights(self, n_ep):
+        if self.model_name == 'dqn':
+            self.model.save_weights("%s_dqn_%d.h5" % (self.output_file, n_ep))
+        else:
+            self.model[0].save_weights("%s_ddqn_select_%d.h5" % (self.output_file, n_ep))
+            self.model[1].save_weights("%s_ddqn_eval_%d.h5" % (self.output_file, n_ep))

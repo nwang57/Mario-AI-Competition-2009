@@ -27,12 +27,21 @@ def parse_arguments():
     parser.add_argument('--n',dest='num_epi',type=int,default='100')
     parser.add_argument('--output', dest='output_file',type=str)
     parser.add_argument('--memory', dest='memory_mode',type=int)
+    parser.add_argument('--prefix', dest='prefix', type=str)
+    parser.add_argument('--save_epi', dest='save_epi', type = int, default=1000)
+    parser.add_argument('--actor_weights', dest='actor_weights', type=str)
+    parser.add_argument('--critic_weights', dest='critic_weights', type=str)
+
     return parser.parse_args()
 
 def main():
     args = parse_arguments()
     agent_name = args.agent
     model = args.model
+    fn_prefix = args.prefix
+    save_epi = args.save_epi
+    actor_weights = args.actor_weights
+    critic_weights = args.critic_weights
 
     task = MarioTask(initMarioMode = 0)
 
@@ -46,7 +55,7 @@ def main():
     	dim_action = len(task.ACTION_MAPPING)
         agent = LearningAgent(dim_obs, dim_action, model)
         exp = EpisodicExperiment(task, agent)
-        exp.train(args.num_epi)
+        exp.train(args.num_epi, save_ep=save_epi)
     elif agent_name == 'pg':
         dim_obs = 47
     	dim_action = len(task.ACTION_MAPPING)
@@ -55,9 +64,9 @@ def main():
         critic_lr = 0.001
         n = 100
         gamma = 0.9
-        agent = PGAgent(dim_obs, dim_action, model_config_path, lr, critic_lr, n)
+        agent = PGAgent(dim_obs, dim_action, model_config_path, lr, critic_lr, n, actor_file=actor_weights, critic_file=critic_weights)
         exp = EpisodicExperiment(task, agent)
-        exp.train_PG(dim_obs, dim_action, args.num_epi, gamma)
+        exp.train_PG(dim_obs, dim_action, args.num_epi, gamma, save_ep=save_epi)
     
     print "finished"
 

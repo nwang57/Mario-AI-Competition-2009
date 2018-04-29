@@ -98,3 +98,6 @@ class LearningAgent(MarioAgent):
             ret += weight * r
             weight *= self.config.GAMMA
         return ret
+    
+    def save_weights(self, n_ep):
+        self.model.save_weights(n_ep)

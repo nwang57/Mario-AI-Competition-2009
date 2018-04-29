@@ -58,7 +58,7 @@ class Reinforce(object):
         self.optimize
 
     def save_weights(self, n_ep):
-        self.model.save_weights("%s_%d.h5" % (self.output_file, n_ep))
+        self.model.save_weights("%s_actor_%d.h5" % (self.output_file, n_ep))
 
     def load_weights(self):
         self.model.load_weights(self.weight_file)
