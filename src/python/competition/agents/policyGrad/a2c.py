@@ -30,6 +30,13 @@ class A2C(Reinforce):
 
     def __init__(self, input_dim, output_dim, model_path, lr, critic_lr, n=20,
         output_file="model", weight_file=None, critic_weight_file=None):
+        # Initializes A2C.
+        # Args:
+        # - model: The actor model.
+        # - lr: Learning rate for the actor model.
+        # - critic_model: The critic model.
+        # - critic_lr: Learning rate for the critic model.
+        # - n: The value of N in N-step A2C.
         self.input_dim = input_dim
         self.output_dim = output_dim
         if model_path:
@@ -39,13 +46,6 @@ class A2C(Reinforce):
             model = self.build_actor(lr)
         super(A2C, self).__init__(model, lr, output_file, weight_file)
 
-        # Initializes A2C.
-        # Args:
-        # - model: The actor model.
-        # - lr: Learning rate for the actor model.
-        # - critic_model: The critic model.
-        # - critic_lr: Learning rate for the critic model.
-        # - n: The value of N in N-step A2C.
         self.model.summary()
 
         self.critic_model = self.build_critic(critic_lr)
@@ -56,7 +56,8 @@ class A2C(Reinforce):
         self.critic_weight_file = critic_weight_file
         if self.critic_weight_file is not None:
             self.critic_model.load_weights(self.critic_weight_file)
-
+        self.critic_model.summary()
+        
         self.loss1 = -tf.reduce_mean(tf.multiply(self.G, tf.log(tf.reduce_sum(tf.multiply(self.A, self.output), axis=1, keepdims=True))))
         self.optimizer = tf.train.AdamOptimizer(learning_rate=self.lr)
         self.opt = self.optimizer.minimize(self.loss1)

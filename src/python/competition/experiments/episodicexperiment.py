@@ -27,6 +27,8 @@ import keras
 
 from experiment import Experiment
 
+WIN_REWARD = 1000
+
 class EpisodicExperiment(Experiment):
     """ The extension of Experiment to handle episodic tasks. 
         implement evaluation
@@ -37,6 +39,8 @@ class EpisodicExperiment(Experiment):
         self.train_rewards = []
         self.cur_state = None
         self.action = None
+        self.train_stat = []
+        self.eval_stat = []
 
     def reset(self):
         self.cur_state = None
@@ -129,16 +133,32 @@ class EpisodicExperiment(Experiment):
         assert(len(states) == len(rewards) + 1)
         return np.concatenate(states[:-1]), actions[:-1], np.array(rewards)
 
-    def train_PG(self, dim_obs, dim_action, num_episodes=100, gamma=0.99, save_ep = 1000):
+    def train_PG(self, dim_obs, dim_action, num_episodes=100, gamma=0.99, save_ep = 1000, eval_ep=500):
         # Trains the model on a single episode using A2C.
         n_ep = 0
         while n_ep < num_episodes:
             states, actions, rewards = self.generate_episode_PG(dim_obs, dim_action)
             print("#{} Episode len {}, total rewards: {}, avg_reward: {}".format(n_ep ,len(rewards), np.sum(rewards), np.mean(rewards)))
+            self.train_stat.append([np.sum(rewards), len(rewards)])
             self.agent.update_network(n_ep, states, actions, rewards, gamma)
+            if (n_ep % eval_ep == 0 or n_ep == num_episodes-1):
+                avg_r, std_r, win_percentage = self.eval_PG(dim_obs, dim_action)
+                self.eval_stat.append([avg_r, std_r, win_percentage])
             if (n_ep % save_ep == 0 or n_ep == num_episodes-1):
                 self.agent.save_model_weights(n_ep)
+                np.save("training_%d" % n_ep, self.train_stat)
+                np.save("eval_%d" % n_ep, self.eval_stat)
             n_ep += 1
+
+    def eval_PG(self,dim_obs, dim_action, num_epi = 100):
+        rewards = []
+        is_win = []
+        for e in range(num_epi):
+            _, _, r = self.generate_episode_PG(dim_obs, dim_action)
+            rewards.append(np.sum(r))
+            win = (np.max(r) >= WIN_REWARD)
+            is_win.append((int)(win))
+        return np.mean(rewards), np.std(rewards), np.mean(is_win)
 ########################################################## END IN CONSTRUCTION #####
 
     def eval(self, num_episodes=20):

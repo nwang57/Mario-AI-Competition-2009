@@ -25,7 +25,6 @@ def parse_arguments():
     parser.add_argument('--pg_model',dest='pg_model',type=str)
     parser.add_argument('--model',dest='model',type=str)
     parser.add_argument('--n',dest='num_epi',type=int,default='100')
-    parser.add_argument('--output', dest='output_file',type=str)
     parser.add_argument('--memory', dest='memory_mode',type=int)
     parser.add_argument('--prefix', dest='prefix', type=str)
     parser.add_argument('--save_epi', dest='save_epi', type = int, default=1000)
