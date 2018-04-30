@@ -734,7 +734,8 @@ public void getHurt(final int spriteKind)
         invulnerableTime = 32;
     } else
     {
-        die("Collision with a creature [" + Sprite.getNameByKind(spriteKind) + "]");
+        
+        die("Collision with a creature [" + spriteKind + " " + Sprite.getNameByKind(spriteKind) + "]");
     }
 }
 

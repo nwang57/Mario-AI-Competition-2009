@@ -1,6 +1,7 @@
 package edu.stanford.cs229.agents;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 import ch.idsia.benchmark.mario.engine.GeneralizerLevelScene;
@@ -78,6 +79,8 @@ public class MarioState {
   private int lastDistance = -1;
   private int x_cell_exit = -1;
   private int m_cell_pass = -1;
+  private int mario_height = -1;
+  private int level_height = -1;
   private boolean win = false;
   private int[] milestone_achieved = new int[LearningParams.REWARD_PARAMS.milestone.length];
   
@@ -173,16 +176,17 @@ public class MarioState {
     }
     for (int y = startY; y <= endY; y++) {
       for (int x = startX; x <= endX; x++) {
-        if (scene[y][x] == Sprite.KIND_GOOMBA ||
-            scene[y][x] == Sprite.KIND_SPIKY) {
-          int i = getObservationLevel(x, y);
-          int d = getDirection(x - MARIO_X, y - MARIO_Y);
-          if (i < 0 || d == Direction.NONE) {
-            continue;
+        if (scene[y][x] >=0 && scene[y][x] <=99) {
+          if (Sprite.enemy_set.get(scene[y][x])) {
+            int i = getObservationLevel(x, y);
+            int d = getDirection(x - MARIO_X, y - MARIO_Y);
+            if (i < 0 || d == Direction.NONE) {
+              continue;
+            }
+            enemies[i].value[d] = true;
+            enemiesCount[i]++;
+            totalEnemiesCount++;
           }
-          enemies[i].value[d] = true;
-          enemiesCount[i]++;
-          totalEnemiesCount++;
         }
       }
     }
@@ -209,6 +213,10 @@ public class MarioState {
         obstacles.value[y] = true;
       }
     }
+
+    // fill height info
+    mario_height = environment.getEvaluationInfo().marioHeight;
+    level_height = environment.getEvaluationInfo().level_height;
     
     // Fill gap info.
     /*gaps.reset();
@@ -246,13 +254,14 @@ public class MarioState {
         collisionsWithCreatures.value * LearningParams.REWARD_PARAMS.collision +
         enemiesKilledByFire.value * LearningParams.REWARD_PARAMS.killedByFire +
         enemiesKilledByStomp.value * LearningParams.REWARD_PARAMS.killedByStomp +
-        milestone_reward;
+        milestone_reward +
+        gap_die() * LearningParams.REWARD_PARAMS.collision;
         // isWin() * LearningParams.REWARD_PARAMS.win;
     
     // Logger.println(2, "D: " + dDistance);
     // Logger.println(2, "H:" + dElevation);
     // Logger.println(2, "Reward = " + reward);
-    // System.out.println(" Distance left: " + distanceLeft + " reward: " + reward);
+    System.out.println(" Distance left: " + distanceLeft + " reward: " + reward);
     return reward;
   }
 
@@ -277,6 +286,11 @@ public class MarioState {
       }
     }
     return 0;
+  }
+
+  public int gap_die() {
+    System.out.println(mario_height+":"+level_height);
+    return (mario_height >= level_height + 1) ? 1:0;
   }
   
   public boolean canJump() {

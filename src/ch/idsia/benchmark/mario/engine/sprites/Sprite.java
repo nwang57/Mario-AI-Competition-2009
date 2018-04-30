@@ -32,6 +32,7 @@ import ch.idsia.benchmark.mario.engine.MarioVisualComponent;
 import ch.idsia.benchmark.mario.engine.level.SpriteTemplate;
 
 import java.awt.*;
+import java.util.BitSet;
 
 public class Sprite
 {
@@ -58,6 +59,9 @@ public static final int KIND_PARTICLE = 21;
 public static final int KIND_SPARCLE = 22;
 public static final int KIND_COIN_ANIM = 1;
 public static final int KIND_FIREBALL = 25;
+public static BitSet enemy_set = new BitSet(100);
+
+
 
 public static final int KIND_UNDEF = -42;
 
@@ -84,6 +88,21 @@ public boolean visible = true;
 public int layer = 1;
 
 public SpriteTemplate spriteTemplate;
+
+public static void setEnemySet()
+{
+    System.out.println("set enemy set");
+    enemy_set.set(KIND_GOOMBA);
+    enemy_set.set(KIND_GOOMBA_WINGED);
+    enemy_set.set(KIND_RED_KOOPA);
+    enemy_set.set(KIND_RED_KOOPA_WINGED);
+    enemy_set.set(KIND_GREEN_KOOPA);
+    enemy_set.set(KIND_GREEN_KOOPA_WINGED);
+    enemy_set.set(KIND_SPIKY);
+    enemy_set.set(KIND_SPIKY_WINGED);
+    enemy_set.set(KIND_ENEMY_FLOWER);
+    enemy_set.set(KIND_WAVE_GOOMBA);
+}
 
 public static void setCreaturesGravity(final float creaturesGravity)
 {

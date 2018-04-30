@@ -605,6 +605,7 @@ private void computeEvaluationInfo()
     evaluationInfo.flowersDevoured = Mario.flowersDevoured;
     evaluationInfo.distancePassedPhys = (int) levelScene.mario.x;
     evaluationInfo.distancePassedCells = levelScene.mario.mapX;
+    evaluationInfo.marioHeight = levelScene.mario.mapY;
 //     evaluationInfo.totalLengthOfLevelCells = levelScene.level.getWidthCells();
 //     evaluationInfo.totalLengthOfLevelPhys = levelScene.level.getWidthPhys();
     evaluationInfo.timeSpent = levelScene.getTimeSpent();
@@ -626,6 +627,7 @@ private void computeEvaluationInfo()
     evaluationInfo.Memo = levelScene.memo;
     evaluationInfo.levelLength = levelScene.level.length;
     evaluationInfo.level_exit = levelScene.level.xExit;
+    evaluationInfo.level_height = levelScene.level.height;
 
     evaluationInfo.marioTraceFileName = marioTraceFile;
     evaluationInfo.marioTrace = levelScene.level.marioTrace;

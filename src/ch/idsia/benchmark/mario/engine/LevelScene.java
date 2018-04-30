@@ -585,6 +585,7 @@ public void reset(MarioAIOptions marioAIOptions)
     Sprite.setCreaturesGravity(marioAIOptions.getCreaturesGravity());
     Sprite.setCreaturesWind(marioAIOptions.getWind());
     Sprite.setCreaturesIce(marioAIOptions.getIce());
+    Sprite.setEnemySet();
     Mario.resetStatic(marioAIOptions);
 
     bonusPoints = -1;

@@ -53,6 +53,7 @@ public static final int numberOfElements = 14;
 // ordered in alphabetical order;
 public int distancePassedCells = MagicNumberUnDef;
 public int distancePassedPhys = MagicNumberUnDef;
+public int marioHeight = MagicNumberUnDef;
 public int flowersDevoured = MagicNumberUnDef;
 public int killsByFire = MagicNumberUnDef;
 public int killsByShell = MagicNumberUnDef;
@@ -80,6 +81,8 @@ public long bytecodeInstructions = MagicNumberUnDef;
 public int levelLength = MagicNumberUnDef;
 
 public int level_exit = MagicNumberUnDef;
+
+public int level_height = MagicNumberUnDef;
 
 public int collisionsWithCreatures = MagicNumberUnDef;
 
