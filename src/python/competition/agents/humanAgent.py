@@ -18,7 +18,7 @@ class HumanAgent(MarioAgent):
         """Constructor"""
         pygame.init()
         pygame.display.set_mode([1,1])
-        self.action = numpy.zeros(5, int)
+        self.action = numpy.zeros(6, int)
         self.isEpisodeOver = 0
         self.obs = None
         self.reverse_map = {}
@@ -26,13 +26,13 @@ class HumanAgent(MarioAgent):
             self.reverse_map[tuple(v)] = k
 
     def reset(self):
-        self.action = numpy.zeros(5, int)
+        self.action = numpy.zeros(6, int)
         self.isEpisodeOver = 0
         self.obs = None
 
     def getAction(self):
         if (self.isEpisodeOver):
-            return numpy.ones(5, int)
+            return numpy.ones(6, int)
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_d:

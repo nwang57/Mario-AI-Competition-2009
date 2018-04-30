@@ -10,18 +10,18 @@ if __name__ != "__main__":
 class MarioTask(EpisodicTask):
     """Encapsulates Mario specific options and transfers them to EpisodicTask"""
     ACTION_MAPPING = {
-        0: [0,0,0,0,0], #stay
-        1: [0,0,0,1,0], #jump
-        2: [0,0,0,0,1], #fire
-        3: [0,0,0,1,1], #jump + fire
-        4: [1,0,0,0,0], #left
-        5: [1,0,0,1,0], #left jump
-        6: [1,0,0,0,1], #left + speed
-        7: [1,0,0,1,1], # left + jump + speed
-        8:  [0,1,0,0,0], #right
-        9: [0,1,0,1,0], #right jump
-        10: [0,1,0,0,1], # right speed
-        11: [0,1,0,1,1], # right jump speed
+        0: [0,0,0,0,0,0], #stay
+        1: [0,0,0,1,0,0], #jump
+        2: [0,0,0,0,1,0], #fire
+        3: [0,0,0,1,1,0], #jump + fire
+        4: [1,0,0,0,0,0], #left
+        5: [1,0,0,1,0,0], #left jump
+        6: [1,0,0,0,1,0], #left + speed
+        7: [1,0,0,1,1,0], # left + jump + speed
+        8: [0,1,0,0,0,0], #right
+        9: [0,1,0,1,0,0], #right jump
+        10: [0,1,0,0,1,0], # right speed
+        11: [0,1,0,1,1,0], # right jump speed
     }
 
     def __init__(self, *args, **kwargs):

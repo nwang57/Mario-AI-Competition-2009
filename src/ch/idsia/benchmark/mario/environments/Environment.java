@@ -43,7 +43,7 @@ import ch.idsia.tools.MarioAIOptions;
 
 public interface Environment
 {
-public static final int numberOfKeys = 5;
+public static final int numberOfKeys = 6;
 
 public static final int MARIO_KEY_DOWN = Mario.KEY_DOWN;
 public static final int MARIO_KEY_JUMP = Mario.KEY_JUMP;

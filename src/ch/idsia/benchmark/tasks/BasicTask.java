@@ -145,6 +145,7 @@ public void doEpisodes(int amount, boolean verbose, final int repetitionsOfSingl
         } else if (n_ep >= 250 && n_ep % 250 == 2) {
             this.options.setVisualization(false);
         }
+
         // for (int j = 0; j < EvaluationInfo.numberOfElements; j++)
         // {
         //     statistics.get(j).add(environment.getEvaluationInfoAsInts()[j]);
