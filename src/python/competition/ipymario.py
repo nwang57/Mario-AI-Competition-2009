@@ -42,6 +42,8 @@ def main():
     critic_weights = args.critic_weights
 
     task = MarioTask(initMarioMode = 0)
+    dim_obs = 54
+    dim_action = len(task.ACTION_MAPPING)
 
     print agent_name
     if agent_name == 'human':
@@ -49,14 +51,10 @@ def main():
         exp = EpisodicExperiment(task, agent)
         exp.run(5)
     elif agent_name == 'learning':
-    	dim_obs = 47
-    	dim_action = len(task.ACTION_MAPPING)
         agent = LearningAgent(dim_obs, dim_action, model)
         exp = EpisodicExperiment(task, agent)
         exp.train(args.num_epi, save_ep=save_epi)
     elif agent_name == 'pg':
-        dim_obs = 47
-    	dim_action = len(task.ACTION_MAPPING)
         model_config_path = args.pg_model
         lr = 0.001
         critic_lr = 0.001

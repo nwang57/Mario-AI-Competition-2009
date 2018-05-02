@@ -165,7 +165,7 @@ public void reset()
     agent = options.getAgent();
     Random ran = new Random();
     int randMarioMode = ran.nextInt(3);
-    options.setMarioMode(randMarioMode);
+    options.setMarioMode(2);
     environment.reset(options);
     agent.reset();
     agent.setObservationDetails(environment.getReceptiveFieldWidth(),

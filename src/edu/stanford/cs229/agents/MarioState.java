@@ -64,7 +64,7 @@ public class MarioState {
   //  M |
   // ---|---
   //  0 | 1
-  //BitArray gaps = new BitArray(2);
+  BitArray gaps = new BitArray("g", 7);
   
   //private Int win = new Int("W", 1);
   
@@ -219,10 +219,10 @@ public class MarioState {
     level_height = environment.getEvaluationInfo().level_height;
     
     // Fill gap info.
-    /*gaps.reset();
-    for (int i = 0; i < gaps.length; i++) {
-      gaps[i] = getDistanceToGround(scene, MARIO_X + i) < 0;
-    }*/
+    gaps.reset();
+    for (int i = 0; i < gaps.value.length; i++) {
+      gaps.value[i] = getDistanceToGround(MARIO_X + i) < 0;
+    }
     
     this.computeStateNumber();
     
@@ -255,13 +255,12 @@ public class MarioState {
         enemiesKilledByFire.value * LearningParams.REWARD_PARAMS.killedByFire +
         enemiesKilledByStomp.value * LearningParams.REWARD_PARAMS.killedByStomp +
         milestone_reward +
-        gap_die() * LearningParams.REWARD_PARAMS.collision;
+        gap_die() * (-2000);
         // isWin() * LearningParams.REWARD_PARAMS.win;
     
     // Logger.println(2, "D: " + dDistance);
     // Logger.println(2, "H:" + dElevation);
     // Logger.println(2, "Reward = " + reward);
-    System.out.println(" Distance left: " + distanceLeft + " reward: " + reward);
     return reward;
   }
 
@@ -289,7 +288,7 @@ public class MarioState {
   }
 
   public int gap_die() {
-    System.out.println(mario_height+":"+level_height);
+    // System.out.println(mario_height+":"+level_height);
     return (mario_height >= level_height + 1) ? 1:0;
   }
   
