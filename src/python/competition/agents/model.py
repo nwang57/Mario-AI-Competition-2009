@@ -182,11 +182,12 @@ class Model():
 
 
     def train(self, n_iter, pretrain=False):
+        # start = time.clock()
         if self.demo_mode:
             self.train_with_demo(pretrain=pretrain)
         else:
             self.train_no_demo()
-
+        # print("one step spends %s" %(time.clock() - start))
         if self.model_name == 'ddqn':
             self.update_target(n_iter)
 
@@ -218,7 +219,7 @@ class Model():
 
     def train_with_demo(self, pretrain=False):
 
-        s_t0, a_t0, r_t1, s_t1, d_t0, discounted_r, idxs, is_demo = self.sample_batch(self.config.BATCH_SIZE, pretrain=pretrain)
+        s_t0, a_t0, r_t1, s_t1, d_t0, idxs, is_demo = self.sample_batch(self.config.BATCH_SIZE, pretrain=pretrain)
         q_t0 = self.sess.run(self.model[0], feed_dict={self.input: s_t0})
         #for td-n update
         q_t0_u1 = np.copy(q_t0)
@@ -242,8 +243,7 @@ class Model():
             # calculate n-step TD target
             # target = r_t+1 + gamma*r_t+2 + ... + gamma^n-1 * r_t+n + gamma^n * q_n
             # q_t0_un[i][a_t0[i]] = self.get_target(discounted_r[i], q_tn[i], d_t0[i], target=target, Y_target=y_target_tn, step=self.config.N_STEP)
-        
-        _, abs_err, loss, sup_loss, one_step = self.sess.run([self.optimize[0], self.abs_err, self.loss, self.loss_e, self.one_step_loss],feed_dict={
+        _, abs_err= self.sess.run([self.optimize[0], self.abs_err],feed_dict={
                                                        self.target_t1: q_t0_u1, 
                                                        self.input: s_t0,
                                                        self.action_t1: a_t0,
