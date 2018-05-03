@@ -41,6 +41,7 @@ class EpisodicExperiment(Experiment):
         self.action = None
         self.train_stat = []
         self.eval_stat = []
+        self.config = agent.config
 
     def reset(self):
         self.cur_state = None
@@ -65,17 +66,26 @@ class EpisodicExperiment(Experiment):
         return all_rewards
 
 
-    def train(self, num_episodes = 100, save_ep = 1000):
+    def train(self, num_episodes = 100, save_ep = 1000, eval_ep=500):
+        pretrain = self.config.DEMO_MODE
         for i in xrange(num_episodes):
             self.reset()
             reward_list = []
+            if self.config.DEMO_MODE:
+                if i < self.config.PRETRAIN_STEPS:
+                    pretrain = True
+                    self.agent.eps = 0.05
+                elif i == self.config.PRETRAIN_STEPS:
+                    pretrain = False
+                    self.agent.eps = self.config.INITIAL_EPS
+                    print("Pretrain finish")
             while True:
                 self.stepid += 1
                 raw_obs= self.task.getObservation()
                 if len(raw_obs) == 2:
                     next_state, reward = raw_obs
                     if self.cur_state is not None:
-                        self.agent.update_network(self.cur_state, self.action, reward, next_state, pretrain=False)
+                        self.agent.update_network(self.cur_state, self.action, reward, next_state, pretrain=pretrain)
                     if reward is None:
                         # epsisode finish
                         print("#{} Episode len {}, total rewards: {}, avg_reward: {}, eps: {}".format(i ,self.stepid, np.sum(reward_list), np.mean(reward_list), self.agent.eps))
@@ -92,8 +102,42 @@ class EpisodicExperiment(Experiment):
                 self.agent.integrateObservation(self.cur_state)
                 self.action = self.agent.getAction()
                 self.task.performAction(self.action)
+            if (i % eval_ep == 0 or i == num_episodes-1):
+                avg_r, std_r, win_percentage = self.eval()
+                self.eval_stat.append([avg_r, std_r, win_percentage])
             if (i % save_ep == 0 or i == num_episodes-1):
                 self.agent.save_weights(i)
+                np.save("training_%d" % i, self.train_stat)
+                np.save("eval_%d" % i, self.eval_stat)
+
+    def eval(self, num_episodes=100):
+        is_win = []
+        total_rewards = []
+        old_eps = self.agent.eps
+        self.agent.eps = 0.05
+        for i in xrange(num_episodes):
+            self.reset()
+            rewards = []
+            while True:
+                self.stepid += 1
+                raw_obs= self.task.getObservation()
+                if len(raw_obs) == 2:
+                    next_state, reward = raw_obs
+                    if reward is None:
+                        total_rewards.append(np.sum(rewards))
+                        win = (np.max(rewards) >= WIN_REWARD)
+                        is_win.append((int)(win))
+                        break
+                    else:
+                        rewards.append(reward)
+                else:
+                    raise KeyError("obs len wrong")
+                self.cur_state = next_state
+                self.agent.integrateObservation(self.cur_state)
+                self.action = self.agent.getAction()
+                self.task.performAction(self.action)
+        self.agent.eps = old_eps
+        return np.mean(total_rewards), np.std(total_rewards), np.mean(is_win)
 
 ######################################################## START IN CONSTRUCTION #####
     def to_onehot(self, val, dim):
@@ -161,46 +205,21 @@ class EpisodicExperiment(Experiment):
         return np.mean(rewards), np.std(rewards), np.mean(is_win)
 ########################################################## END IN CONSTRUCTION #####
 
-    def eval(self, num_episodes=20):
-        for i in xrange(num_episodes):
-            self.reset()
-            while True:
-                self.stepid += 1
-                raw_obs= self.task.getObservation()
-                if len(raw_obs) == 2:
-                    next_state, reward = raw_obs
-                    if reward is None:
-                        # epsisode finish
-                        break
-                    if self.cur_state is not None:
-                        self.agent.update_network(self.cur_state, self.action, reward, next_state, pretrain=False)
-
-                else:
-                    raise KeyError("obs len wrong")
-                # perform update with cur, action, next, reward
-                # if self.cur_state is not None:
-                #     pass
-                self.cur_state = next_state
-                self.agent.integrateObservation(self.cur_state)
-                self.action = self.agent.getAction()
-                self.task.performAction(self.action)
-
     def run(self, num_episodes = 100):
         for i in xrange(num_episodes):
             self.reset()
             while True:
                 self.stepid += 1
-                raw_obs= self.task.getObservation()
+                raw_obs = self.task.getObservation()
                 if len(raw_obs) == 2:
                     next_state, reward = raw_obs
+                    if self.cur_state is not None:
+                        self.agent.record(self.cur_state, self.action, reward, next_state)
                     if reward is None:
                         # episode finish
                         break
                 else:
                     raise KeyError("obs len wrong")
-                # perform update with cur, action, next, reward
-                # if self.cur_state is not None:
-                #     pass
                 self.cur_state = next_state
                 self.action = self.agent.getAction()
                 self.task.performAction(self.action)             

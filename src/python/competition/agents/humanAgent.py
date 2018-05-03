@@ -4,6 +4,7 @@ __date__ = "$May 1, 2009 2:46:34 AM$"
 
 from marioagent import MarioAgent
 import pdb
+import numpy as np
 import pygame
 
 class HumanAgent(MarioAgent):
@@ -21,7 +22,9 @@ class HumanAgent(MarioAgent):
         self.action = numpy.zeros(6, int)
         self.isEpisodeOver = 0
         self.obs = None
+        self.last_obs = None
         self.reverse_map = {}
+        self.memo = []
         for k,v in action_mapping.items():
             self.reverse_map[tuple(v)] = k
 
@@ -29,6 +32,7 @@ class HumanAgent(MarioAgent):
         self.action = numpy.zeros(6, int)
         self.isEpisodeOver = 0
         self.obs = None
+        self.last_obs = None
 
     def getAction(self):
         if (self.isEpisodeOver):
@@ -67,13 +71,31 @@ class HumanAgent(MarioAgent):
 
     def integrateObservation(self, obs):
         """This method stores the observation inside the agent"""
-        # pdb.set_trace()
-        if (len(obs) == 5):
-            # print(obs)
-            self.isEpisodeOver = True
+        self.obs = np.array(obs)
+
+    def record(self, cur_obs, action, reward, next_obs):
+        # deal with episode end
+        done = reward is None
+        self.perceive(cur_obs, action, reward, next_obs, done)
+
+    def perceive(self, cur_obs, action, reward, next_obs, done):
+        """
+            Append the transition to the replay buffer
+        """
+        #s_t0, a_t0, r_t1, s_t1, d_t0
+        if self.last_obs is not None:
+            if reward is None:
+                self.last_obs[4] = True
+                self.memo.append(self.last_obs)
+            else:
+                self.memo.append(self.last_obs)
+                self.last_obs = [cur_obs, action, reward, next_obs, done]
         else:
-            self.obs = obs[0]
-            self.reward = obs[1]
+            self.last_obs = [cur_obs, action, reward, next_obs, done]
+        if len(self.memo) % 10000 == 0:
+            print(len(self.memo))
+        if len(self.memo) == 50000:
+            np.save("demo", self.memo)
 
     def printObs(self):
         """for debug"""

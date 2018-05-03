@@ -98,14 +98,14 @@ public class LearningParams {
    * Scalers to apply to distance/elevation rewards when enemies are present
    * in the corresponding observation level.
    */
-  public static final float[] ENEMIES_AROUND_REWARD_SCALER = {0f, 0f, 1f, 1f};
+  public static final float[] ENEMIES_AROUND_REWARD_SCALER = {0f, 0f, 0.5f, 1f};
   
   public static final class REWARD_PARAMS {
     public static final int distance = 3;
     public static final int elevation = 2;
     public static final int collision = -1000;
-    public static final int killedByFire = 20;
-    public static final int killedByStomp = 20;
+    public static final int killedByFire = 50;
+    public static final int killedByStomp = 50;
     public static final int stuck = -2;
     // public static final int win = 2000;
     public static final int[] milestone = {

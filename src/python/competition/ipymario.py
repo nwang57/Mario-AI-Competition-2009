@@ -49,7 +49,7 @@ def main():
     if agent_name == 'human':
         agent = HumanAgent(task.ACTION_MAPPING, task.obs_space)
         exp = EpisodicExperiment(task, agent)
-        exp.run(5)
+        exp.run(200)
     elif agent_name == 'learning':
         agent = LearningAgent(dim_obs, dim_action, model)
         exp = EpisodicExperiment(task, agent)

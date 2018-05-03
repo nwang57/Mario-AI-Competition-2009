@@ -20,7 +20,7 @@ class LearningAgent(MarioAgent):
         self.config = Config()
         self.obs = None
         self.action_dim = dim_action
-        self.model = Model(dim_obs,dim_action, self.config, model_name, demo_mode=False)
+        self.model = Model(dim_obs,dim_action, self.config, model_name)
         self.eps = self.config.INITIAL_EPS
         self.burn_in_size = self.config.BURN_IN_SIZE
         self.inv_gamma = 1.0 / self.config.GAMMA
@@ -51,7 +51,7 @@ class LearningAgent(MarioAgent):
         # deal with episode end
         done = reward is None
         self.perceive(cur_obs, action, reward, next_obs, done)
-        if self.burn_in_cur_size < self.burn_in_size:
+        if (not self.config.DEMO_MODE) and (self.burn_in_cur_size < self.burn_in_size):
             self.burn_in_cur_size += 1
             if self.burn_in_cur_size % 1000 == 0:
                 print(self.burn_in_cur_size)
@@ -71,7 +71,7 @@ class LearningAgent(MarioAgent):
         return action
 
     def update_eps(self):
-        delta = (self.config.INITIAL_EPS - self.config.FINAL_EPS) / 100000
+        delta = (self.config.INITIAL_EPS - self.config.FINAL_EPS) / 4000000
         if self.eps > self.config.FINAL_EPS:
             self.eps -= delta
 

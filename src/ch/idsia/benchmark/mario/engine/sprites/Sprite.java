@@ -91,7 +91,7 @@ public SpriteTemplate spriteTemplate;
 
 public static void setEnemySet()
 {
-    System.out.println("set enemy set");
+    // System.out.println("set enemy set");
     enemy_set.set(KIND_GOOMBA);
     enemy_set.set(KIND_GOOMBA_WINGED);
     enemy_set.set(KIND_RED_KOOPA);

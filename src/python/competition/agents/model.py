@@ -9,6 +9,7 @@ import json
 from memory import prioritizedMemory, classicMemory
 from config import Config
 import functools
+import time
 
 
 '''
@@ -32,7 +33,7 @@ def lazy_property(func):
 
 class Model():
 
-    def __init__(self, num_input, num_output, config, model_name, demo_mode=False, output_file='model'):
+    def __init__(self, num_input, num_output, config, model_name, output_file='model'):
 
         self.sess = tf.Session()
         self.num_input = num_input
@@ -40,7 +41,7 @@ class Model():
         self.config = config
         self.output_file = output_file
         self.model_name = model_name
-        self.demo_mode = demo_mode
+        self.demo_mode = self.config.DEMO_MODE
         self.select_net_name = 'select_net'
         self.target_net_name = 'eval_net'
         self.input = tf.placeholder(tf.float32, name= 'input_ph', shape=[None, self.num_input])
@@ -53,14 +54,11 @@ class Model():
         else: 
             self.memory = classicMemory(config.MEMORY_SIZE, config.BURN_IN_SIZE)
 
+        # if self.demo_mode:
+        #     self.target_tn = tf.placeholder(tf.float32, name= 'output_tn', shape=[None, self.num_output])
         if self.demo_mode:
-            self.target_tn = tf.placeholder(tf.float32, name= 'output_tn', shape=[None, self.num_output])
-            
-            if self.config.PRIORITIZED:
-                self.demo = self.get_demo_memory(self.config.DEMO_FILE)
-                print("demo size: %d" % self.demo.cur_size)
-            else:
-                self.demo = classicMemory(config.DEMO_SIZE)
+            self.demo = self.get_demo_memory(self.config.DEMO_FILE)
+            print("demo size: %d" % self.demo.cur_size)
 
         self.model
         self.loss
@@ -68,11 +66,21 @@ class Model():
         self.abs_err
 
         self.sess.run(tf.global_variables_initializer())
+        self.saver = tf.train.Saver()
 
     def get_demo_memory(self, file_name):
-        import pickle
-        with open(file_name, "rb") as f:
-            return pickle.load(f, encoding="bytes")
+        start = time.clock()
+        data = np.load(file_name)
+        size = len(data)
+        if self.config.PRIORITIZED:
+            memory = prioritizedMemory(size)
+        else:
+            memory = classicMemory(size)
+        for transition in data:
+            memory.append(transition)
+        print("Memory load spends %s" % (time.clock() - start))
+        return memory
+
         
 
     @lazy_property
@@ -89,7 +97,7 @@ class Model():
     def get_layers(self, scope_name):
         num_hidden = 32
         with tf.variable_scope(scope_name):
-            layer1 = tf.layers.dense(name = 'l1', inputs = self.input, units = num_hidden, activation=tf.nn.relu)
+            layer1 = tf.layers.dense(name = 'l1', inputs = self.input, units = 80, activation=tf.nn.relu)
             layer2 = tf.layers.dense(name = 'l2', inputs = layer1, units = num_hidden, activation=tf.nn.relu)
             layer3 = tf.layers.dense(name = 'l3', inputs = layer2, units = num_hidden, activation=tf.nn.relu)
             outlayer = tf.layers.dense(name = 'l4', inputs = layer3, units = self.num_output)
@@ -112,10 +120,10 @@ class Model():
     def loss(self): 
         if self.demo_mode:
             j_1 = tf.reduce_mean(self.one_step_loss, name='one_step_loss')
-            j_n = tf.reduce_mean(self.n_step_loss, name='n_step_loss')
+            # j_n = tf.reduce_mean(self.n_step_loss, name='n_step_loss')
             j_e = tf.reduce_mean(self.loss_e,  name='sup_loss')
             j_l2 = tf.reduce_sum([tf.reduce_mean(reg_l) for reg_l in tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)], name='reg_loss')
-            return j_1 + j_n * self.config.LAMBDAS[0] + j_e * self.config.LAMBDAS[1] + j_l2 * self.config.LAMBDAS[2]
+            return j_1 + j_e * self.config.LAMBDAS[1] + j_l2 * self.config.LAMBDAS[2]
         else: #ddqn or dqn
             return tf.reduce_mean(self.one_step_loss)
 
@@ -123,9 +131,9 @@ class Model():
     def abs_err(self):
         if self.demo_mode:
             j_1 = tf.reduce_sum(self.one_step_loss, axis=1, name='one_step_loss_sum')
-            j_n = tf.reduce_sum(self.n_step_loss, axis=1,name='n_step_loss_sum')
+            # j_n = tf.reduce_sum(self.n_step_loss, axis=1,name='n_step_loss_sum')
             j_e = self.loss_e
-            return j_1 + j_n * self.config.LAMBDAS[0] + j_e * self.config.LAMBDAS[1]
+            return j_1 + j_e * self.config.LAMBDAS[1]
         else:
             return tf.reduce_sum(self.one_step_loss, axis=1)
 
@@ -134,10 +142,10 @@ class Model():
         # return an target_t1 shape loss (batch_size, num_actions)
         return tf.losses.mean_squared_error(self.target_t1, self.model[0], reduction=tf.losses.Reduction.NONE)
 
-    @lazy_property
-    def n_step_loss(self):
-        # return an target_t1 shape loss (batch_size, num_actions)
-        return tf.losses.mean_squared_error(self.target_tn, self.model[0], reduction=tf.losses.Reduction.NONE)
+    # @lazy_property
+    # def n_step_loss(self):
+    #     # return an target_t1 shape loss (batch_size, num_actions)
+    #     return tf.losses.mean_squared_error(self.target_tn, self.model[0], reduction=tf.losses.Reduction.NONE)
 
     def l_e(self, a, ae):
         ret = tf.cond(tf.equal(a,ae), lambda: 0.0, lambda: self.config.JE_IF_DIFFER, name='is_equal')
@@ -145,7 +153,7 @@ class Model():
 
     @lazy_property
     def action_list(self):
-        return tf.constant([0,1,2])
+        return tf.constant(range(self.num_output))
 
     def add_margin(self, actions, i, a):
         return self.model[0][i][a] + self.l_e(a, actions[i])
@@ -210,34 +218,33 @@ class Model():
 
     def train_with_demo(self, pretrain=False):
 
-        s_t0, a_t0, r_t1, s_t1, d_t0, discounted_r, s_tn, idxs, is_demo = self.sample_batch(self.config.BATCH_SIZE, pretrain=pretrain)
+        s_t0, a_t0, r_t1, s_t1, d_t0, discounted_r, idxs, is_demo = self.sample_batch(self.config.BATCH_SIZE, pretrain=pretrain)
         q_t0 = self.sess.run(self.model[0], feed_dict={self.input: s_t0})
         #for td-n update
         q_t0_u1 = np.copy(q_t0)
-        q_t0_un = np.copy(q_t0)
+        # q_t0_un = np.copy(q_t0)
 
         q_t1 = self.sess.run(self.model[0], feed_dict={self.input: s_t1})
-        q_tn = self.sess.run(self.model[0], feed_dict={self.input: s_tn})
+        # q_tn = self.sess.run(self.model[0], feed_dict={self.input: s_tn})
 
         if self.model_name == 'ddqn':
             target = True
             Y_target_t1 = self.sess.run(self.model[1], feed_dict={self.input: s_t1})
-            Y_target_tn = self.sess.run(self.model[1], feed_dict={self.input: s_tn})
+            # Y_target_tn = self.sess.run(self.model[1], feed_dict={self.input: s_tn})
         else:
             target = False
 
         for i in range(self.config.BATCH_SIZE):
             y_target_t1 = Y_target_t1[i] if target else None
-            y_target_tn = Y_target_tn[i] if target else None
+            # y_target_tn = Y_target_tn[i] if target else None
 
             q_t0_u1[i][a_t0[i]] = self.get_target(r_t1[i], q_t1[i], False, target=target, Y_target=y_target_t1)
             # calculate n-step TD target
             # target = r_t+1 + gamma*r_t+2 + ... + gamma^n-1 * r_t+n + gamma^n * q_n
-            q_t0_un[i][a_t0[i]] = self.get_target(discounted_r[i], q_tn[i], d_t0[i], target=target, Y_target=y_target_tn, step=self.config.N_STEP)
+            # q_t0_un[i][a_t0[i]] = self.get_target(discounted_r[i], q_tn[i], d_t0[i], target=target, Y_target=y_target_tn, step=self.config.N_STEP)
         
-        _, abs_err, loss, sup_loss, one_step, n_step = self.sess.run([self.optimize[0], self.abs_err, self.loss, self.loss_e, self.one_step_loss, self.n_step_loss],feed_dict={
+        _, abs_err, loss, sup_loss, one_step = self.sess.run([self.optimize[0], self.abs_err, self.loss, self.loss_e, self.one_step_loss],feed_dict={
                                                        self.target_t1: q_t0_u1, 
-                                                       self.target_tn: q_t0_un, 
                                                        self.input: s_t0,
                                                        self.action_t1: a_t0,
                                                        self.is_demo: is_demo})
@@ -268,10 +275,10 @@ class Model():
                 sample, idxs = self.demo.sample(batch_size)
                 num_demo = batch_size
             else: 
-                demo_weight = self.demo.get_total_weight()
-                replay_weight = self.memory.get_total_weight()
-                prob_demo = demo_weight / (demo_weight + replay_weight)
-                demo_num = int (batch_size * prob_demo)
+                # demo_weight = self.demo.get_total_weight()
+                # replay_weight = self.memory.get_total_weight()
+                # prob_demo = demo_weight / (demo_weight + replay_weight)
+                demo_num = int (batch_size * 0.5)
                 replay_num = batch_size - demo_num
                 # import pdb;pdb.set_trace()
 
@@ -303,12 +310,12 @@ class Model():
         is_demo = np.zeros(self.config.BATCH_SIZE)
         is_demo[range(num_demo)] = 1
 
-        if self.demo_mode:
-            discounted_r = np.stack(sample[:,5])
-            s_tn = np.stack(sample[:,6])
-            return s_t0, a_t0, r_t1, s_t1, d_t0, discounted_r, s_tn, idxs, is_demo
-        else: 
-            return s_t0, a_t0, r_t1, s_t1, d_t0, idxs, is_demo
+        # if self.demo_mode:
+        #     discounted_r = np.stack(sample[:,5])
+        #     s_tn = np.stack(sample[:,6])
+        #     return s_t0, a_t0, r_t1, s_t1, d_t0, discounted_r, s_tn, idxs, is_demo
+        # else: 
+        return s_t0, a_t0, r_t1, s_t1, d_t0, idxs, is_demo
 
     def get_target(self, reward, q_vals, done, target=False, Y_target=None, step=1):
         if done:
@@ -352,8 +359,4 @@ class Model():
 
    
     def save_weights(self, n_ep):
-        if self.model_name == 'dqn':
-            self.model.save_weights("%s_dqn_%d.h5" % (self.output_file, n_ep))
-        else:
-            self.model[0].save_weights("%s_ddqn_select_%d.h5" % (self.output_file, n_ep))
-            self.model[1].save_weights("%s_ddqn_eval_%d.h5" % (self.output_file, n_ep))
+        self.saver.save(self.sess, "./%s_%d" % (self.output_file, n_ep))
