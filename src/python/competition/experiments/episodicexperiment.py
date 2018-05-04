@@ -66,7 +66,7 @@ class EpisodicExperiment(Experiment):
         return all_rewards
 
 
-    def train(self, num_episodes = 100, save_ep = 1000, eval_ep=500):
+    def train(self, num_episodes = 100, save_ep = 200, eval_ep=200):
         pretrain = self.config.DEMO_MODE
         for i in xrange(num_episodes):
             self.reset()
@@ -89,6 +89,7 @@ class EpisodicExperiment(Experiment):
                     if reward is None:
                         # epsisode finish
                         print("#{} Episode len {}, total rewards: {}, avg_reward: {}, eps: {}".format(i ,self.stepid, np.sum(reward_list), np.mean(reward_list), self.agent.eps))
+                        self.train_stat.append([np.sum(reward_list), len(reward_list)])
                         reward_list = []
                         break
                     else:
