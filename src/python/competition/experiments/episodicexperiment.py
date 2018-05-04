@@ -66,7 +66,7 @@ class EpisodicExperiment(Experiment):
         return all_rewards
 
 
-    def train(self, num_episodes = 100, save_ep = 200, eval_ep=200):
+    def train(self, num_episodes = 100, save_ep = 200, eval_ep=100):
         pretrain = self.config.DEMO_MODE
         for i in xrange(num_episodes):
             self.reset()
