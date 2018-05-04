@@ -27,7 +27,7 @@ def parse_arguments():
     parser.add_argument('--n',dest='num_epi',type=int,default='100')
     parser.add_argument('--memory', dest='memory_mode',type=int)
     parser.add_argument('--prefix', dest='prefix', type=str)
-    parser.add_argument('--save_epi', dest='save_epi', type = int, default=1000)
+    parser.add_argument('--save_epi', dest='save_epi', type = int, default=100)
     parser.add_argument('--actor_weights', dest='actor_weights', type=str)
     parser.add_argument('--critic_weights', dest='critic_weights', type=str)
     return parser.parse_args()
