@@ -30,6 +30,7 @@ def parse_arguments():
     parser.add_argument('--save_epi', dest='save_epi', type = int, default=100)
     parser.add_argument('--actor_weights', dest='actor_weights', type=str)
     parser.add_argument('--critic_weights', dest='critic_weights', type=str)
+    parser.add_argument('--learning_weights', dest='learning_weights', type=str)
     return parser.parse_args()
 
 def main():
@@ -40,6 +41,7 @@ def main():
     save_epi = args.save_epi
     actor_weights = args.actor_weights
     critic_weights = args.critic_weights
+    learning_weights = args.learning_weights
 
     task = MarioTask(initMarioMode = 0)
     dim_obs = 54
@@ -51,7 +53,7 @@ def main():
         exp = EpisodicExperiment(task, agent)
         exp.run(200)
     elif agent_name == 'learning':
-        agent = LearningAgent(dim_obs, dim_action, model)
+        agent = LearningAgent(dim_obs, dim_action, model,  weight_file=learning_weights)
         exp = EpisodicExperiment(task, agent)
         exp.train(args.num_epi, save_ep=save_epi)
     elif agent_name == 'pg':

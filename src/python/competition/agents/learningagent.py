@@ -16,11 +16,11 @@ class LearningAgent(MarioAgent):
     """
         
 
-    def __init__(self, dim_obs, dim_action, model_name):
+    def __init__(self, dim_obs, dim_action, model_name, weight_file):
         self.config = Config()
         self.obs = None
         self.action_dim = dim_action
-        self.model = Model(dim_obs,dim_action, self.config, model_name)
+        self.model = Model(dim_obs,dim_action, self.config, model_name, weight_file=weight_file)
         self.eps = self.config.INITIAL_EPS
         self.burn_in_size = self.config.BURN_IN_SIZE
         self.inv_gamma = 1.0 / self.config.GAMMA

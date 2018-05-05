@@ -33,7 +33,7 @@ def lazy_property(func):
 
 class Model():
 
-    def __init__(self, num_input, num_output, config, model_name, output_file='model'):
+    def __init__(self, num_input, num_output, config, model_name, output_file='model', weight_file=None):
 
         self.sess = tf.Session()
         self.num_input = num_input
@@ -48,6 +48,7 @@ class Model():
         self.target_t1 = tf.placeholder(tf.float32, name= 'output_ph', shape=[None, self.num_output])
         self.action_t1 = tf.placeholder(tf.int32, name="action_t1", shape=[None])
         self.is_demo = tf.placeholder(tf.float32, name="is_demo", shape=[None])
+        self.weight_file = weight_file
 
         if self.config.PRIORITIZED:
             self.memory = prioritizedMemory(config.MEMORY_SIZE, config.BURN_IN_SIZE)
@@ -67,6 +68,8 @@ class Model():
 
         self.sess.run(tf.global_variables_initializer())
         self.saver = tf.train.Saver()
+        if self.weight_file is not None:
+            self.load_weights(self.weight_file)
 
     def get_demo_memory(self, file_name):
         start = time.clock()
@@ -360,3 +363,6 @@ class Model():
    
     def save_weights(self, n_ep):
         self.saver.save(self.sess, "./%s_%d" % (self.output_file, n_ep))
+
+    def load_weights(self, filename):
+        self.saver.restore(self.sess, filename)
