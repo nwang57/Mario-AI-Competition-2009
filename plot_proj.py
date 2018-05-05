@@ -24,7 +24,7 @@ def plot():
         std = eval_data[:,1]
         percent = eval_data[:,2]
         eval_len = eval_data.shape[0]
-        eval_x = np.arange(0, eval_len*500, 500)
+        eval_x = np.arange(0, eval_len*100, 100)
 
         plt.figure()
         fig, ax1 = plt.subplots()
@@ -41,7 +41,7 @@ def plot():
         std = eval_data[:,1]
         percent = eval_data[:,2]
         eval_len = eval_data.shape[0]
-        eval_x = np.arange(0, eval_len*500, 500)
+        eval_x = np.arange(0, eval_len*100, 100)
 
         plt.figure()
         fig, ax2 = plt.subplots()
