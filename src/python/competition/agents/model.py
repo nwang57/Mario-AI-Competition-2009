@@ -260,7 +260,6 @@ class Model():
                                                        self.input: s_t0,
                                                        self.action_t1: a_t0,
                                                        self.is_demo: is_demo})
-        print("Abs error is %f" % abs_err)
         # _, abs_err = self.sess.run([self.optimize[0], self.abs_err],feed_dict={
         #                                                self.target_t1: q_t0_u1, 
         #                                                self.target_tn: q_t0_un, 
