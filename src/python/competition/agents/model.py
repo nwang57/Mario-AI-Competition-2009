@@ -166,13 +166,22 @@ class Model():
     def loss_e(self):
         # return an target_t1 shape loss (batch_size)
         actions = self.action_t1
-        loss_je = []
-        for i in range(self.config.BATCH_SIZE):
-            f = lambda a: self.add_margin(actions, i, a)
-            max_value = tf.reduce_max(tf.map_fn(f, self.action_list,dtype=tf.float32), name='max')
-            loss_je.append(self.is_demo[i] * (max_value - self.model[0][i][actions[i]]))
-        return tf.convert_to_tensor(loss_je, dtype=tf.float32)
 
+        bias_mask = tf.reduce_max(self.model[0] + tf.multiply((tf.ones([self.config.BATCH_SIZE, self.num_output])
+            - tf.one_hot(actions, self.num_output)),
+            tf.constant(self.config.JE_IF_DIFFER)), axis=1, keepdims=True)
+        pad = tf.reshape(tf.range(self.config.BATCH_SIZE), [-1, 1])
+        indices = tf.concat([pad, tf.reshape(actions, [-1,1])], axis=1)
+        loss_je = bias_mask - tf.reshape(tf.gather_nd(self.model[0], indices), [-1, 1])
+        # self.l_e(self.action_list, actions) + self.model[0]
+        
+
+        #for i in range(self.config.BATCH_SIZE):
+        #    f = lambda a: self.add_margin(actions, i, a)
+        #    max_value = tf.reduce_max(tf.map_fn(f, self.action_list,dtype=tf.float32), name='max')
+        #    loss_je.append(self.is_demo[i] * (max_value - self.model[0][i][actions[i]]))
+        #return tf.convert_to_tensor(loss_je, dtype=tf.float32)
+        return loss_je
 
     @lazy_property
     def optimize(self):
@@ -246,7 +255,7 @@ class Model():
             # calculate n-step TD target
             # target = r_t+1 + gamma*r_t+2 + ... + gamma^n-1 * r_t+n + gamma^n * q_n
             # q_t0_un[i][a_t0[i]] = self.get_target(discounted_r[i], q_tn[i], d_t0[i], target=target, Y_target=y_target_tn, step=self.config.N_STEP)
-        _, abs_err= self.sess.run([self.optimize[0], self.abs_err],feed_dict={
+        _, abs_err = self.sess.run([self.optimize[0], self.abs_err],feed_dict={
                                                        self.target_t1: q_t0_u1, 
                                                        self.input: s_t0,
                                                        self.action_t1: a_t0,
